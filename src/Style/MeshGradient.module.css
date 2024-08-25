@@ -1,0 +1,130 @@
+.gradientWrap {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    background-color: rgba(var(--light), .2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.meshgradient>.color {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transform: scale(3) rotate(0deg);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    margin: auto;
+    background-repeat: no-repeat;
+    mix-blend-mode: overlay;
+}
+
+.c1 {
+    background: radial-gradient(#dfa39b 25%, transparent 50%);
+    background-size: 60% 80%;
+    background-position: 0 0;
+    animation: c1 8s infinite linear;
+}
+
+.c2 {
+    background: radial-gradient(#aa8de3 25%, transparent 50%);
+    background-size: 70% 80%;
+    background-position: 0 100%;
+    animation: c2 10s infinite linear;
+}
+
+.c3 {
+    background: radial-gradient(#d1a0c4 25%, transparent 50%);
+    background-size: 80% 80%;
+    background-position: 50% 0;
+    animation: c3 5s infinite linear;
+}
+
+.c4 {
+    background: radial-gradient(#52bce9 25%, transparent 50%);
+    background-size: 80% 80%;
+    background-position: 50% 100%;
+    animation: c4 6s infinite linear;
+}
+
+/* Updated animations with more breakpoints */
+@keyframes c1 {
+    25% {
+        background-size: 70% 70%;
+        background-position: 25% 50%;
+        transform: scale(3) rotate(-45deg);
+    }
+
+    50% {
+        background-size: 80% 80%;
+        background-position: 50% 100%;
+        transform: scale(3) rotate(-75deg);
+    }
+
+    75% {
+        background-size: 60% 60%;
+        background-position: 75% 50%;
+        transform: scale(3) rotate(-30deg);
+    }
+}
+
+@keyframes c2 {
+    25% {
+        background-size: 60% 60%;
+        background-position: 25% 0;
+        transform: scale(3) rotate(45deg);
+    }
+
+    50% {
+        background-size: 80% 80%;
+        background-position: 50% 0;
+        transform: scale(3) rotate(90deg);
+    }
+
+    75% {
+        background-size: 70% 70%;
+        background-position: 75% 0;
+        transform: scale(3) rotate(135deg);
+    }
+}
+
+@keyframes c3 {
+    25% {
+        background-size: 90% 90%;
+        background-position: 50% 50%;
+        transform: scale(3) rotate(-15deg);
+    }
+
+    50% {
+        background-size: 70% 80%;
+        background-position: 0 100%;
+        transform: scale(3) rotate(8deg);
+    }
+
+    75% {
+        background-size: 60% 70%;
+        background-position: 50% 50%;
+        transform: scale(3) rotate(-10deg);
+    }
+}
+
+@keyframes c4 {
+    25% {
+        background-position: 100% 0;
+        transform: scale(3) rotate(30deg);
+    }
+
+    50% {
+        background-position: 0 0;
+        transform: scale(3) rotate(-36deg);
+    }
+
+    75% {
+        background-position: 50% 50%;
+        transform: scale(3) rotate(0deg);
+    }
+}

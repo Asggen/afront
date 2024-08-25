@@ -1,0 +1,18 @@
+/* style.css */
+.color {
+    color: var(--white);
+}
+
+body {
+    background-color: #252525;
+}
+
+.background {
+    background-color: aquamarine;
+    height: 50px;
+    width: 50px;
+}
+
+:root {
+    --white: #fff
+}
