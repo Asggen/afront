@@ -51,7 +51,7 @@
     "readline-sync": "^1.4.10",
     "styled-components": "^6.1.12",
     "terser-webpack-plugin": "^5.3.10",
-    "postcss": ">=8.4.31",
+    "postcss": "^8.4.31",
     "tmp": "^0.2.1"
   },
   "devDependencies": {
@@ -76,7 +76,7 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4",
     "webpack-node-externals": "^3.0.0",
-    "postcss": ">=8.4.31"
+    "postcss": "^8.4.31"
   },
   "resolutions": {
     "loader-utils": "^1.4.2"
