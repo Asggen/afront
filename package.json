@@ -1,6 +1,6 @@
 {
   "name": "afront",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "AFront is a front-end JavaScript library designed to create seamless server-side rendered (SSSR) websites.",
   "main": "webpack.dev.js",
   "scripts": {
@@ -10,6 +10,13 @@
     "prod:ssr": "node build-prod-ssr/ssr.prod.js",
     "start": "webpack serve --config webpack.dev.js",
     "static": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Asggen/afront"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "afront",

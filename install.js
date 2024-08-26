@@ -8,10 +8,10 @@ const AdmZip = require('adm-zip');
 const readline = require('readline');
 
 // Configuration
-const GITHUB_ZIP_URL = 'https://github.com/Asggen/afront/archive/refs/tags/v1.0.8.zip'; // Updated URL
+const GITHUB_ZIP_URL = 'https://github.com/Asggen/afront/archive/refs/tags/v1.0.9.zip'; // Updated URL
 
 // Define files to skip
-const SKIP_FILES = ['FUNDING.yml', 'CODE_OF_CONDUCT.md', 'SECURITY.md', 'install.js'];
+const SKIP_FILES = ['FUNDING.yml', 'CODE_OF_CONDUCT.md', 'SECURITY.md', 'install.js', '.npmrc'];
 
 // Initialize readline interface
 const rl = readline.createInterface({
