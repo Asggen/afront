@@ -8,29 +8,25 @@
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js**: You can download and install it from [Node.js official website](https://nodejs.org/).
+- **Node.js**: You must have Node.js installed on your system. Download it from the [Node.js official website](https://nodejs.org/).
 
 ### Installation
 
-1. **Download and Extract Release**
-
-   - Download the latest release from the [Releases page](https://github.com/Asggen/afront/releases).
-   - Extract the contents of the release to a directory of your choice.
-
-2. **Install Dependencies**
+1. **Install AFront**
 
    - Open your terminal or command prompt.
-   - Navigate to the root folder of the extracted release:
+   - To create a new project in a custom folder, run the following command:
      ```bash
-     cd path/to/extracted/root/folder
+     npx afront <your-folder-name>
      ```
-   - Install the required dependencies:
+   - To create the project in the current directory, run:
      ```bash
-     npm install
+     npx afront .
      ```
-     or
+
+   - Navigate to the root folder of the newly created project:
      ```bash
-     npm i
+     cd path/to/your/project
      ```
 
 ### Running the Project
@@ -69,4 +65,13 @@ Thank you for using **AFront**! We look forward to seeing what you build with it
 ```arduino
 This `README.md` file provides clear instructions on prerequisites, installation, and running the project in different environments. You can customize the links and details as needed for your specific project.
 ```
+
+
+### Changes Made:
+1. **Prerequisites**: Clarified that Node.js must be installed.
+2. **Installation**: Added instructions to run `npx afront <your-folder-name>` to create a custom folder or `npx afront .` to create the project in the current directory.
+3. **Running the Project**: This section remained the same.
+
+You can now use this updated `README.md` in your project.
+
 
