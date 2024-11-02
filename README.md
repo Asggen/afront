@@ -1,6 +1,6 @@
 # AFront
 
-[![afront](/advisor/npm-package/afront/badge.svg)](/advisor/npm-package/afront)
+[![afront](https://snyk.io/advisor/npm-package/afront/badge.svg)](https://snyk.io/advisor/npm-package/afront/badge.svg)
 
 **AFront** is a powerful framework for building scalable, high-performance web applications with ease. This README provides instructions on how to get started with the project.
 
