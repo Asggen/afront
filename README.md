@@ -1,6 +1,9 @@
 # AFront
 
+[![NPM Version][npm-version-image]][npm-url]
 [![afront](https://snyk.io/advisor/npm-package/afront/badge.svg)](https://snyk.io/advisor/npm-package/afront/badge.svg)
+
+
 
 **AFront** is a powerful framework for building scalable, high-performance web applications with ease. This README provides instructions on how to get started with the project.
 
@@ -57,7 +60,7 @@ If you'd like to contribute to the project, please follow the guidelines in the 
 
 ## 📝 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT](LICENSE).
 
 ---
 
@@ -77,3 +80,6 @@ This `README.md` file provides clear instructions on prerequisites, installation
 You can now use this updated `README.md` in your project.
 
 
+
+[npm-url]: https://npmjs.org/package/afront
+[npm-version-image]: https://badgen.net/npm/v/afront
