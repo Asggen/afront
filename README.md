@@ -5,6 +5,7 @@
 [![install size](https://packagephobia.com/badge?p=afront)](https://packagephobia.com/result?p=afront)
 [![publish size](https://badgen.net/packagephobia/publish/afront)](https://www.npmjs.com/package/afront)
 [![NPM Downloads][npm-downloads-image]][npm-downloads-url]
+[![License][license-src]][license-href]
 
 
 **AFront** is a powerful framework for building scalable, high-performance web applications with ease. This README provides instructions on how to get started with the project.
@@ -87,4 +88,7 @@ You can now use this updated `README.md` in your project.
 [npm-version-image]: https://badgen.net/npm/v/afront
 [npm-downloads-image]: https://badgen.net/npm/dm/afront
 [npm-downloads-url]: https://npmcharts.com/compare/afront?minimal=true
+[license-src]: https://badgen.net/github/license/Asggen/afront
+[license-href]: LICENSE.md
+
 
