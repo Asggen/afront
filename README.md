@@ -89,6 +89,6 @@ You can now use this updated `README.md` in your project.
 [npm-downloads-image]: https://badgen.net/npm/dm/afront
 [npm-downloads-url]: https://npmcharts.com/compare/afront?minimal=true
 [license-src]: https://badgen.net/github/license/Asggen/afront
-[license-href]: LICENSE.md
+[license-href]: https://github.com/Asggen/afront/blob/main/LICENSE
 
 
