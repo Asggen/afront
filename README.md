@@ -2,7 +2,9 @@
 
 [![NPM Version][npm-version-image]][npm-url]
 [![afront](https://snyk.io/advisor/npm-package/afront/badge.svg)](https://snyk.io/advisor/npm-package/afront/badge.svg)
-
+[![install size](https://packagephobia.com/badge?p=afront)](https://packagephobia.com/result?p=afront)
+[![publish size](https://badgen.net/packagephobia/publish/afront)](https://www.npmjs.com/package/afront)
+[![NPM Downloads][npm-downloads-image]][npm-downloads-url]
 
 
 **AFront** is a powerful framework for building scalable, high-performance web applications with ease. This README provides instructions on how to get started with the project.
@@ -83,3 +85,6 @@ You can now use this updated `README.md` in your project.
 
 [npm-url]: https://npmjs.org/package/afront
 [npm-version-image]: https://badgen.net/npm/v/afront
+[npm-downloads-image]: https://badgen.net/npm/dm/afront
+[npm-downloads-url]: https://npmcharts.com/compare/afront?minimal=true
+
