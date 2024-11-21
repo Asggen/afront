@@ -6,7 +6,6 @@
 [![publish size](https://badgen.net/packagephobia/publish/afront)](https://www.npmjs.com/package/afront)
 [![NPM Downloads][npm-downloads-image]][npm-downloads-url]
 [![License][license-src]][license-href]
-[![Coverage Status](https://coveralls.io/repos/github/Asggen/afront/badge.svg?branch=main)](https://coveralls.io/github/Asggen/afront?branch=main)
 
 
 **AFront** is a powerful framework for building scalable, high-performance web applications with ease. This README provides instructions on how to get started with the project.
