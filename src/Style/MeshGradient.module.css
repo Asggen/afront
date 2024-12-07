@@ -7,7 +7,7 @@
     backdrop-filter: blur(10px);
 }
 
-.meshgradient>.color {
+.meshgradient .color {
     width: 100%;
     height: 100%;
     display: flex;

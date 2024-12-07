@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 import routes from "../ARoutes/AFRoutes.js";
 import LoadingFallback from "../LoadingFallback.js";
 

@@ -12,31 +12,38 @@ const Home = ({ context }) => {
   HeadTags({ title, description, keywords, context });
 
   return (
-      <MeshGradient>
-        <main className="main">
-          <section className="section banner banner-section">
-            <div className="container banner-column">
-              <img className="banner-image" src={tensorlabLogo} alt="banner" />
-              <div className="banner-inner">
-                <h1 className="heading-xl">
-                  Empower Your Front-End with AFront
-                </h1>
-                <p className="paragraph">
-                  AFront streamlines front-end development with robust tools and
-                  <b> seamless server-side rendering (SSSR)</b>. Build dynamic,
-                  high-performance web experiences effortlessly.
-                </p>
-                <div className="btn-darken-block">
-                  <a href="/" className="btn-darken menu-block">
-                    Get Started{" "}
-                    <img className="btn-darken-arrow" src={arrowright} />
-                  </a>
-                </div>
+    <MeshGradient>
+      <main>
+        <section className={styles.section}>
+          <div className={`${styles.container} ${styles.bannerColumn}`}>
+            <img
+              className={styles.bannerImage}
+              src={tensorlabLogo}
+              alt="banner"
+            />
+            <div className={styles.bannerInner}>
+              <h1 className={styles.headingXl}>
+                Empower Your Front-End with AFront
+              </h1>
+              <p className={styles.paragraph}>
+                AFront streamlines front-end development with robust tools and
+                <b> seamless server-side rendering (SSSR)</b>. Build dynamic,
+                high-performance web experiences effortlessly.
+              </p>
+              <div>
+                <a
+                  href="/"
+                  className={`${styles.btnDarken} ${styles.menuBlock}`}
+                >
+                  Get Started{" "}
+                  <img className={styles.btnDarkenArrow} src={arrowright} />
+                </a>
               </div>
             </div>
-          </section>
-        </main>
-      </MeshGradient>
+          </div>
+        </section>
+      </main>
+    </MeshGradient>
   );
 };
 

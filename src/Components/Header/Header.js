@@ -56,68 +56,66 @@ const Header = () => {
   }, [isBurgerActive]);
   return (
     <header
-      className={`header  ${
-        isBurgerActive ? "off-scroll" : `${isScrolled ? "on-scroll" : ""}`
+      className={`${styles.header}  ${
+        isBurgerActive
+          ? styles.offScroll
+          : `${isScrolled ? styles.onScroll : ""}`
       } `}
       id="header"
     >
-      <nav className="navbar container">
-        <a href="/" className="brand">
+      <nav className={`${styles.navbar} ${styles.container}`}>
+        <a href="/" className={`${styles.brand}`}>
           AFront
         </a>
         <div
-          className={`burger ${isBurgerActive ? "is-active" : ""}`}
+          className={`${styles.burger} ${
+            isBurgerActive ? styles.isActive : ""
+          }`}
           id="burger"
           onClick={toggleMenu}
         >
-          <span className="burger-line"></span>
-          <span className="burger-line"></span>
-          <span className="burger-line"></span>
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
         </div>
         <div
-          className={`menu ${isBurgerActive ? "is-active " : "is-inactive"}`}
+          className={`${styles.menu} ${
+            isBurgerActive ? styles.isActive : styles.isInActive
+          }`}
           id="menu"
         >
-          <ul className="menu-inner">
-            <li className="menu-item">
+          <ul className={styles.menuInner}>
+            <li className={styles.menuItem}>
               <a
                 href="#"
-                className={`menu-link ${
-                  isBurgerActive ? "menu-link-mobile" : ""
-                }`}
+                className={`${styles.menuLink} ${isBurgerActive ? styles.menuLinkMobile : ""}`}
                 onClick={closeMenu}
               >
                 Learn
               </a>
             </li>
-            <li className="menu-item">
+            <li className={styles.menuItem}>
               <a
                 href="#"
-                className={`menu-link ${
-                  isBurgerActive ? "menu-link-mobile" : ""
-                }`}
+                className={`${styles.menuLink} ${isBurgerActive ? styles.menuLinkMobile : ""}`}
                 onClick={closeMenu}
               >
                 Feature
               </a>
             </li>
-            <li className="menu-item">
+            <li className={styles.menuItem}>
               <a
                 href="#"
-                className={`menu-link ${
-                  isBurgerActive ? "menu-link-mobile" : ""
-                }`}
+                className={`${styles.menuLink} ${isBurgerActive ? styles.menuLinkMobile : ""}`}
                 onClick={closeMenu}
               >
                 Blog
               </a>
             </li>
-            <li className="menu-item">
+            <li className={styles.menuItem}>
               <a
                 href="/support"
-                className={`menu-link ${
-                  isBurgerActive ? "menu-link-mobile" : ""
-                }`}
+                className={`${styles.menuLink} ${isBurgerActive ? styles.menuLinkMobile : ""}`}
                 onClick={closeMenu}
               >
                 Support
@@ -125,11 +123,11 @@ const Header = () => {
             </li>
             {isBurgerActive && (
               <>
-                <li className="menu-item">
+                <li className={styles.menuItem}>
                   <a
                     href="#"
-                    className={`menu-link ${
-                      isBurgerActive ? "menu-link-mobile" : ""
+                    className={`${styles.menuLink} ${
+                      isBurgerActive ? styles.menuLinkMobile : ""
                     }`}
                     onClick={closeMenu}
                   >
@@ -140,7 +138,7 @@ const Header = () => {
             )}
           </ul>
         </div>
-        <a href="/" className="menu-block">
+        <a href="/" className={styles.menuBlock}>
           Get Started
         </a>
       </nav>

@@ -34,7 +34,7 @@ module.exports = {
             loader: "css-loader",
             options: {
               modules: {
-                localIdentName: "[local]",
+                localIdentName: "asggen-[hash:base64:7]",
               },
             },
           },

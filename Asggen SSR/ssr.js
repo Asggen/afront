@@ -7,9 +7,9 @@ const fs = require("fs").promises;
 const path = require("path");
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
-const { StaticRouter } = require("react-router-dom/server");
+const { StaticRouter } = require("react-router");
 const App = require("../src/App").default;
-const headHtml = require("./Head")
+const headHtml = require("./Head");
 require("dotenv").config();
 
 const app = express();
