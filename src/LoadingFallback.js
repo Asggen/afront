@@ -1,5 +1,5 @@
 import React from "react";
-import * as appStyles from "./style/App.module.css";
+import * as appStyles from "../style/App.module.css";
 import logo from "../dev/logo512.png";
 
 const LoadingFallback = () => {
