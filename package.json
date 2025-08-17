@@ -54,13 +54,13 @@
     "html-inline-css-webpack-plugin": "^1.11.2",
     "ignore-styles": "^5.0.1",
     "json5": "^1.0.2",
-    "loader-utils": "^1.4.2",
+    "loader-utils": "^1.4.1",
     "postcss": "^8.4.31",
     "react-router": "^7.5.2",
     "readline-sync": "^1.4.10",
     "styled-components": "^6.1.13",
     "terser-webpack-plugin": "^5.3.10",
-    "tmp": "^0.2.3"
+    "tmp": "^0.2.4"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.9",
@@ -87,7 +87,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "resolutions": {
-    "loader-utils": "^1.4.2"
+    "loader-utils": "^1.4.1"
   },
   "bin": {
     "afront": "install.js"
