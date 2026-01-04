@@ -1,5 +1,5 @@
 {
-  "name": "@Asggen/afront",
+  "name": "afront",
   "version": "1.0.20",
   "description": "AFront is a front-end JavaScript library designed to create seamless server-side rendered (SSSR) websites.",
   "main": "webpack.dev.js",
