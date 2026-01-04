@@ -13,6 +13,7 @@ module.exports = {
   output: {
     filename: "static/js/[name]-[contenthash].js",
     path: path.resolve(__dirname, "build-prod-static"),
+    publicPath: "/",
     clean: true,
   },
   module: {
@@ -39,6 +40,7 @@ module.exports = {
               modules: {
                 localIdentName: "asggen-[hash:base64:7]",
               },
+              sourceMap: true,
             },
           },
         ],
@@ -70,6 +72,9 @@ module.exports = {
     minimizer: [
       new TerserWebpackPlugin({
         terserOptions: {
+          compress: {
+            drop_console: false,
+          },
           format: {
             comments: false, // Remove all comments
           },
@@ -85,6 +90,12 @@ module.exports = {
       template: "./dev/index.html",
       buildTag: `prod-[contenthash]`,
       hash: true,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+      },
       templateParameters: (compilation, options) => {
         const hash = crypto.createHash("sha1");
         hash.update(compilation.hash);
@@ -110,6 +121,8 @@ module.exports = {
         { from: "dev/manifest.json", to: "manifest.json" }, // Copy manifest
         { from: "dev/style.css", to: "style.css" },
         { from: "dev/robots.txt", to: "robots.txt" },
+        { from: "dev/service-worker.js", to: "service-worker.js" },
+        { from: "dev/offline.html", to: "offline.html" },
       ],
     }),
   ],

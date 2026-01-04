@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFront</title>
+    <style>
+        html {
+            color-scheme: dark;
+            min-width: 20rem;
+            scrollbar-color: hsl(0, 0%, 67%) transparent;
+            -webkit-tap-highlight-color: transparent;
+            -ms-overflow-style: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        :not([no-y-overflow])::-webkit-scrollbar-thumb {
+            height: 56px;
+            border-radius: 8px;
+            border: 4px solid transparent;
+            background-clip: content-box;
+            background-color: #717171;
+        }
+
+        :hover::-webkit-scrollbar-thumb {
+            background-color: hsl(0, 0%, 67%);
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        :not([no-y-overflow]) {
+            /* scrollbar-color: hsl(0, 0%, 67%) transparent; */
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+            height: 100vh;
+        }
+
+        #start.asgHeader,
+        #center.asgHeader,
+        #end.asgHeader {
+            display: flexbox;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .header {
+            position: fixed;
+            height: 3.5rem;
+            background-color: #0f0f0f;
+            width: 100%;
+            width: -moz-available;
+  width: -webkit-fill-available;
+            width: -moz-available;
+            width: fill-available;
+            padding: 0 0.6rem;
+            display: flexbox;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 4;
+        }
+
+        .sidebarTopMargin {
+            margin-top: 3.5rem;
+        }
+
+        .sidebar {
+            height: calc(100% - 3.5rem);
+            position: fixed;
+            left: 0;
+            display: none;
+            flex-direction: column;
+            overflow-y: scroll;
+            z-index: 0;
+            scrollbar-color: transparent transparent;
+        }
+
+        .sidebar:hover {
+            scrollbar-color: #717171 transparent;
+            -webkit-tap-highlight-color: transparent;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            background: transparent;
+            width: 16px;
+        }
+
+        .sidebar:hover::-webkit-scrollbar-thumb {
+            scrollbar-width: auto;
+            background-color: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            height: 56px;
+            border-radius: 8px;
+            border: 4px solid transparent;
+            background-clip: content-box;
+            background-color: transparent;
+        }
+
+        .sidebar:hover::-webkit-scrollbar-thumb {
+            background-color: #717171;
+        }
+
+        .sidebarFirst {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.25rem 0.6rem;
+            z-index: 1;
+            /* Higher z-index to ensure it's above other children */
+            /* position: relative; */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            border-top: 0.0625rem solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebarLast {
+            position: sticky;
+            bottom: 0;
+            /* Stays pinned to the bottom */
+            background-color: #0f0f0f;
+            display: flex;
+            /* Add flex to enable gap */
+            flex-direction: column;
+            /* Ensure items stack vertically */
+            gap: 0.5rem;
+            /* Space between child elements */
+            padding: 0.6rem;
+            border-top: 0.0625rem solid rgba(255, 255, 255, 0.2);
+            z-index: 2;
+            /* Lower z-index to ensure it doesn't overlap the first child */
+        }
+
+
+        .sidebarBtns {
+            min-width: calc(3.699375rem - 1.2rem);
+            min-height: 40px;
+            border-radius: 0.75rem;
+            background-color: #404040;
+            /* Placeholder color for buttons */
+        }
+
+        .content {
+            margin-left: 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 140px;
+            padding-bottom: 60px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .no-internet-svg {
+            height: 15rem;
+            margin-bottom: 16px;
+        }
+
+        .message {
+            font-size: 1.5em;
+            margin-bottom: 16px;
+            font-family: "Roboto", "Arial", sans-serif;
+            line-height: 1.2em;
+            font-weight: 400;
+        }
+
+        .retry {
+            margin-top: 16px;
+            padding-bottom: 8px;
+        }
+
+        .retry button {
+            color: #4DABFF;
+            border-color: rgba(255, 255, 255, 0.2);
+            padding: 0 15px;
+            border-width: 1px;
+            border-style: solid;
+            height: 36px;
+            font-size: 14px;
+            line-height: 36px;
+            border-radius: 18px;
+            position: relative;
+            margin: 0;
+            white-space: nowrap;
+            min-width: 0;
+            text-transform: none;
+            font-family: "Roboto", "Arial", sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            outline-width: 0;
+            box-sizing: border-box;
+            background: none;
+            text-decoration: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-tap-highlight-color: transparent;
+            flex: 1;
+            flex-basis: 0.000000001px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .retry button:hover {
+            background: #324a69;
+            border-color: transparent;
+        }
+
+        .additional-message {
+            font-family: "Roboto", "Arial", sans-serif;
+            font-size: 1em;
+            line-height: 1.5rem;
+            font-weight: 400;
+        }
+
+        .headerBtnMenu {
+            width: calc(3.699375rem - 1.2rem);
+            height: 40px;
+            border-radius: 0.75rem;
+            background-color: #404040;
+        }
+
+        .asggenLink {
+            display: flexbox;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            text-decoration: none;
+            -webkit-text-decoration: none;
+            -moz-text-decoration: none;
+            cursor: pointer;
+        }
+
+        .img {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .img svg {
+            --svg-mode-color: rgba(255, 255, 255, 1);
+            fill: var(--svg-mode-color);
+        }
+
+        .asgLogo {
+            padding: 1.125rem 0.125rem 1.125rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .asgLogo svg {
+            height: 1.5rem;
+        }
+
+        .asgLogoText {
+            font-family: 'SF Pro Text';
+            font-weight: 700;
+            line-height: 2.5rem;
+            font-size: 2rem;
+            color: #fff;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            text-decoration: none;
+            -webkit-text-decoration: none;
+            -moz-text-decoration: none;
+            cursor: pointer;
+        }
+
+        .headerBtnTwo {
+            width: 100%;
+            display: flex;
+        }
+
+        #center.asgHeader {
+            flex: 1 1 auto;
+            max-width: 45.75rem;
+        }
+
+        .searchBtn {
+            margin: 0 0.5rem 0 5rem;
+            flex: 1;
+            padding: 0rem 0.5625rem 0rem 1rem;
+            border: 0.0625rem solid rgba(255, 255, 255, 0.2);
+            height: 2.5rem;
+            position: relative;
+            display: inline-block;
+            display: flex;
+            flex-direction: row-reverse;
+            transition: width 0.5s ease, padding 0.5s ease, border 0.5s ease;
+            border-radius: 5rem;
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            -webkit-box-sizing: content-box;
+        }
+
+        .voiceBtn {
+            margin-right: 0.5rem;
+            min-width: 2.5rem;
+            height: 2.5rem;
+            border: 0.0625rem solid rgba(255, 255, 255, 0.2);
+            border-radius: 5rem;
+        }
+
+        .createBtn {
+            width: 100px;
+            height: 2.5rem;
+            border: 0.0625rem solid rgba(255, 255, 255, 0.2);
+            border-radius: 5rem;
+        }
+
+        .avatarBtn {
+            width: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatarBtns {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            margin: 0rem 0.5rem;
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
+        }
+
+        #end.asgHeader {
+            gap: 0.5rem;
+            display: none;
+        }
+
+        .bar {
+            position: fixed;
+            bottom: 0;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            width: 100%;
+            text-align: center;
+            font-family: "Roboto", "Arial", sans-serif;
+            font-style: italic;
+            font-size: .92rem;
+            line-height: 1rem;
+            background-color: #0f0f0f;
+        }
+
+        .hiddenBtn {
+            display: none;
+        }
+
+        .hiddenBtnTwo {
+            display: none
+        }
+
+        @media (max-width: 593px) {
+            .hidden {
+                display: none;
+            }
+
+            .bottom {
+                position: fixed;
+                bottom: 24px;
+                padding-top: 4px;
+                border-top: 0.0625rem solid rgba(255, 255, 255, 0.2);
+                padding-bottom: 4px;
+                width: 100%;
+                text-align: center;
+                font-family: "Roboto", "Arial", sans-serif;
+                font-style: italic;
+                font-size: .92rem;
+                line-height: 1rem;
+                -webkit-backdrop-filter: blur(24px);
+                backdrop-filter: blur(24px);
+                background-color: rgba(15, 15, 15, .7);
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+            }
+
+            .bottomBtn {
+                min-width: calc(3.699375rem - 1.2rem);
+                min-height: 40px;
+                border-radius: 0.75rem;
+                background-color: #404040;
+            }
+
+            .marginTwo {
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 656px) {
+            .margin {
+                margin: 0;
+            }
+        }
+
+        @media (min-width:656px) {
+            #end.asgHeader {
+                display: flex;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .searchBtn {
+                margin: 0 0.5rem;
+            }
+        }
+
+
+
+        @media (min-width: 792px) {
+            .sidebar {
+                display: flex;
+                /* Sidebar becomes visible */
+            }
+
+            .sidebarFirst {
+                border-top: 0;
+            }
+
+            .content {
+                margin-left: 72px;
+                /* Adjust content margin */
+            }
+
+            .sidebarBtn {
+                border-top: 0;
+            }
+
+            #end.asgHeader {
+                display: flex;
+            }
+
+            .voiceBtn {
+                min-width: 58px;
+            }
+
+            .bar {
+                width: calc(100% - 59.17px);
+            }
+
+            .hiddenBtnTwo {
+                display: block;
+            }
+        }
+
+
+
+        @media (min-width: 1313px) {
+            .hiddenBtn {
+                display: block;
+            }
+        }
+
+
+        @media (min-width: 1313px) {
+            .sidebar {
+                width: 240px;
+                /* Sidebar expands to 240px */
+            }
+
+            .content {
+                margin-left: 240px;
+                /* Adjust content margin */
+            }
+
+            .sidebarBtn {
+                border-top: 0.0625rem solid rgba(255, 255, 255, 0.2);
+            }
+
+            .sidebarBtns {
+                width: 100%;
+            }
+
+            #end.asgHeader {
+                display: flex;
+            }
+
+            .bar {
+                width: calc(100% - 240px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div id="start" class="asgHeader">
+            <div class="headerBtnMenu"></div>
+            <a class="asggenLink">
+                <div class="img asgLogo" alt="logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M19.3019 24H24L21.0871 12.0282L21.0734 11.9718L18.1605 0H13.0544L6.54252 11.9718L6.5272 12L6.51188 12.0282L0 24H5.1488L12.8448 9.85067H15.8592L19.3019 24Z">
+                        </path>
+                        </path>
+                    </svg>
+                </div>
+                <div class="asgLogoText">Front</div>
+            </a>
+
+        </div>
+        <div id="center" class="asgHeader">
+            <div class="headerBtnTwo">
+                <div class="searchBtn"></div>
+            </div>
+            <div class="voiceBtn marginTwo"></div>
+            <div class="voiceBtn hidden margin"></div>
+        </div>
+
+        <div id="end" class="asgHeader">
+            <div class="headerBtnMenu hiddenBtn"></div>
+            <div class="headerBtnMenu hiddenBtn"></div>
+            <div class="headerBtnMenu hiddenBtn"></div>
+            <div class="createBtn" style="width: 2.5rem;"></div>
+            <div class="createBtn"></div>
+            <div class="headerBtnMenu hiddenBtnTwo"></div>
+            <div class="avatarBtn">
+                <div class="avatarBtns"></div>
+            </div>
+        </div>
+    </header>
+
+    </div>
+    <div>
+        <div class="sidebarTopMargin"></div>
+        <div class="sidebar">
+
+            <div class="sidebarFirst">
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+            </div>
+            <div class="sidebarLast">
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+                <div class="sidebarBtns"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="no-internet-svg">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px"
+                y="0px" viewBox="0 0 500 500" width="300" height="240" style="enable-background:new 0 0 500 500;"
+                xml:space="preserve">
+
+                <g id="OBJECTS">
+                    <g>
+                        <g>
+                            <circle style="fill:#FFC5B2;" cx="338.123" cy="265.587" r="132.389" />
+                            <circle style="fill:#FFE6DE;" cx="216.349" cy="213.803" r="158.921" />
+                            <g>
+                                <g>
+                                    <path
+                                        style="fill:none;stroke:#2380D1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                        d="M64.66,409.341       c-7.549-9.402-10.324-22.449-7.255-34.109" />
+                                    <path style="fill:#4DABFF;"
+                                        d="M70.664,434.396c-5.598-1.19-11.26-2.402-16.405-4.909c-5.145-2.507-9.8-6.483-11.951-11.787       c-2.151-5.304-1.306-12.01,2.936-15.852c2.768-2.507,6.78-3.566,10.424-2.753c3.645,0.813,6.826,3.477,8.266,6.923       c-1.348-4.053-0.494-8.596,2.253-11.866c2.747-3.271,7.245-4.976,11.47-4.348c4.225,0.628,8.033,3.566,9.711,7.494       c1.246-3.468,4.858-6.03,8.537-5.839c3.68,0.191,7.06,2.458,9.146,5.495s2.987,6.764,3.154,10.445       c0.272,5.994-1.348,12.06-4.571,17.121C92.835,428.109,81.465,430.807,70.664,434.396z" />
+                                    <path style="fill:#2380D1;"
+                                        d="M89.438,424.522c-1.466-6.951-7.497-12.703-14.509-13.838       c5.808-0.538,12.003,1.876,15.598,6.468c0.291-4.428,1.865-8.69,4.857-11.968c-1.549,6.815-0.822,14.594,1.82,21.064       C94.859,425.793,91.785,424.978,89.438,424.522z" />
+                                    <path style="fill:#2380D1;"
+                                        d="M430.023,445.117c-29.052-27.171-104.178-46.527-192.288-46.527S74.499,417.946,45.447,445.117       H430.023z" />
+                                    <path style="fill:#2380D1;"
+                                        d="M49.341,378.817c1.247,2.601,3.227,5.03,5.985,5.871c3.764,1.147,7.914-0.88,10.418-3.915       s3.714-6.903,4.867-10.665c-2.399,0.986-4.792,1.708-7.191,2.694c-0.97-2.109-2.171-4.435-4.085-6.047       c-2.884,0.709-5.369,2.777-7.273,5.46c-0.794-2.563-1.723-4.926-2.517-7.489C48.789,366.757,46.699,373.305,49.341,378.817z" />
+                                </g>
+                                <g>
+                                    <g>
+                                        <path style="fill:#FF9500;"
+                                            d="M288.824,329.284c-4.069-2.32-7.429-5.455-10.026-9.089        c-31.88,19.002-81.846,49.403-93.402,40.099c0,0-14.497,22.76,6.08,47.669c15.433,15.704,73.206,32.113,113.355-47.669        l4.959-17.426C302.645,338.584,296.072,333.417,288.824,329.284z" />
+                                        <g>
+                                            <path style="fill:#FFB09E;"
+                                                d="M369.855,392.448c0,0,12.125,10.526,20.874,14.001c1.488,0.591,3.175,0.363,4.49-0.55         c3.74-2.597,11.691-8.372,14.692-12.523c1.58-2.035,1.582-4.249-5.688-2.048c-5.059,1.224-16.065,4.416-25.045-8.004         L369.855,392.448z" />
+                                            <path style="fill:#FF9500;"
+                                                d="M277.321,314.466l13.28-7.827c23.811,10.289,51.258,35.932,91.88,75.583l-10.923,13.949         c0,0-51.13-5.858-91.321-48.189L277.321,314.466z" />
+                                            <g>
+                                                <g>
+                                                    <path style="fill:#2B292A;"
+                                                        d="M310.498,344.266c-0.157,0-0.311-0.073-0.408-0.211c-0.16-0.225-0.107-0.537,0.119-0.697           c18.909-13.409,31.894-35.151,34.736-58.159c0.034-0.273,0.287-0.472,0.558-0.435c0.274,0.034,0.469,0.283,0.435,0.558           c-2.876,23.281-16.016,45.282-35.15,58.853C310.699,344.235,310.598,344.266,310.498,344.266z" />
+                                                </g>
+                                            </g>
+                                            <polygon style="fill:#FF7B00;"
+                                                points="362.536,396.922 380.15,374.982 388.004,382.062 371.055,402.425        " />
+                                            <path style="fill:#2380D1;"
+                                                d="M413.983,388.847c-2.218-3.46-6.945-2.357-8.724-1.941c-0.644,0.15-1.346,0.339-2.087,0.562         c0,0-1.155,0.284-1.562,0.379c-2.555,0.597-5.285,0.983-8.053,0.58c-2.728-0.398-5.456,0.686-7.028,2.951         c-1.229,1.77-2.626,3.425-4.174,4.934c-3.35,3.268-2.55,8.868,1.51,11.196c1.835,1.052,3.662,1.975,5.387,2.66         c1.649,0.655,3.444,0.786,5.19,0.378c1.1-0.257,2.13-0.715,3.059-1.36c5.398-3.748,12.477-9.11,15.613-13.411         C415.722,392.371,414.593,389.799,413.983,388.847z" />
+                                        </g>
+                                        <g>
+                                            <path style="fill:#2B292A;"
+                                                d="M275.735,162.784l2.738-1.219l0,0c4.028,1.103,7.8,3.027,10.965,5.751         c2.793,2.404,5.577,5.591,6.27,9.135c3,14.125-4.5,25.611-4,34.055c0.5,8.445,3.167,22.278,6.667,31.778         s13.5,36.833-2.667,54.167c0,0-16.207,22.333-58.437,0c-39.896-20.333-55.896-40-52.23-58         c7.333-25.382,26.329-19.919,32.331-57.126c0,0,2.66-9.237,7.615-14.585l26.484-5.175L275.735,162.784z" />
+                                            <path style="fill:#2380D1;"
+                                                d="M233.133,228.467c0,0,20.502,0.646,34.655,18.316c13.81,17.499,17.068,21.444,17.068,21.444         l-19.641,16.635L233.133,228.467z" />
+                                            <path style="fill:#18558C;"
+                                                d="M283.453,263.944l8.375,3.08c0,0-2.951,16.394-23.686,26.195l-0.893-6.845L283.453,263.944z" />
+                                            <path style="fill:#F06363;"
+                                                d="M277.321,262.931l18.817,15.938c1.143,0.968,2.64,1.414,4.126,1.228l47.359-5.91l2.419,11.939         l-54.941,13.716c-3.978,0.993-8.193,0.106-11.432-2.407l-20.23-15.691L277.321,262.931z" />
+                                            <path style="fill:#1E6DB3;"
+                                                d="M268.142,293.219c0,0,6.476-19.602,23.686-26.195l-8.341-9.161c0,0-18.355,8.41-23.846,26.538         L268.142,293.219z" />
+                                            <path style="fill:#4DABFF;"
+                                                d="M269.6,315.44c-0.02,0.57-0.04,1.15-0.07,1.73c-0.04,1.26-0.1,2.54-0.17,3.85l-5.56,2.67         l-98.44,47.24c0,0,0.24-19.87,11.83-55.58c4.38-16.09,8.1-39.21,10-52.11c0.86-5.88,1.35-9.63,1.35-9.63         s2.13-31.62,43.37-25.31c0,0,12.74,0.97,21.82,12.55C262.47,252,271.31,268.43,269.6,315.44z" />
+                                            <path style="fill:#3993E3;"
+                                                d="M272.15,314.19c-0.87,0.99-1.74,1.99-2.62,2.98c-1.9,2.18-3.81,4.35-5.73,6.52l-98.44,47.24         c0,0,0.24-19.87,11.83-55.58c4.38-16.09,8.1-39.21,10-52.11c1.01,0.15,1.99,0.45,2.92,0.92c4.89,2.47,6.63,8.54,7.35,13.98         c1.74,13.22,0.47,26.82-3.71,39.49c-1.22,3.71-2.7,7.39-3.13,11.27c-0.43,3.89,0.35,8.13,3.09,10.92         c2.6,2.64,6.56,3.55,10.25,3.25c3.69-0.31,7.19-1.68,10.63-3.06c18.63-7.51,36.98-15.7,55.01-24.57         C270.45,315.03,271.3,314.61,272.15,314.19z" />
+                                            <path style="fill:#3993E3;"
+                                                d="M269.818,315.307c0,0-7.581,5.286-14.037,3.068c-6.456-2.218-41.107-19.176-41.107-19.176         l-2.129,3.096l-17.927-11.95c0,0-10.412-7.426-7.888-24.025l61.893,42.276L269.818,315.307z" />
+                                            <path style="fill:#18558C;"
+                                                d="M219.71,264.286l9.645,1.038c0,0,1.213,18.069-18.069,33.875l-2.748-6.984L219.71,264.286z" />
+                                            <polygon style="fill:#FF61B0;"
+                                                points="337.209,293.617 346.042,246.784 362.875,250.052 354.042,296.284        " />
+                                            <g>
+                                                <g>
+                                                    <path style="fill:#FFB09E;"
+                                                        d="M232.511,185.048c-0.448-3.198-1.827-6.423-4.449-8.309           c-2.622-1.886-6.628-2.011-8.888,0.296c-2.192,2.237-2.136,5.88-1.139,8.849c1.911,5.692,6.879,10.255,12.713,11.677           C230.706,193.342,233.096,189.226,232.511,185.048z" />
+                                                    <path style="fill:#F06363;"
+                                                        d="M230.225,188.163c-0.899-3.307-3.443-5.879-6.739-6.817           c-0.622-0.177-0.885,0.788-0.266,0.964c1.125,0.32,2.148,0.852,3.03,1.548c-1.426,0.663-2.381,2.092-2.422,3.702           c-0.016,0.645,0.984,0.644,1,0c0.034-1.374,0.953-2.549,2.257-2.948c1.019,1.046,1.776,2.347,2.175,3.816           C229.43,189.051,230.394,188.787,230.225,188.163z" />
+                                                    <g>
+                                                        <path style="fill:#FFB09E;"
+                                                            d="M240.576,237.847c-1.15,3.12-8.81,5.28-16.33-1.25c-1.96-1.69-2.56-4.47-1.46-6.82            l6.57-14.07l3.25-6.95l8.98,7.23l-3.54,8.27l-2.45,5.72C235.596,229.977,241.885,234.287,240.576,237.847z" />
+                                                        <path style="fill:#F06363;"
+                                                            d="M241.585,215.987l-3.54,8.27c-3.95-2.3-6.76-5.24-8.69-8.55l3.25-6.95L241.585,215.987z" />
+                                                    </g>
+                                                    <path style="fill:#FFB09E;"
+                                                        d="M234.238,168.721c0,0-18.931,38.656,5.975,52.492c7.101,3.945,15.571,4.914,23.316,2.464           c6.353-2.009,13.523-6.633,17.02-17.065c1.771-5.284,2.043-10.942,1.169-16.447c-1.3-8.186-3.98-17.611-3.98-17.611           l-6-8.833l-23.517-3.167L234.238,168.721z" />
+                                                    <g>
+                                                        <path style="fill:#231F20;"
+                                                            d="M271.785,290.967c0.97,0.47,1.91,0.94,2.82,1.41l-1.61,0.3c-0.54-0.27-1.08-0.54-1.64-0.81            c-1.74-0.84-3.51-1.65-5.29-2.47c-8.59-3.94-17.48-8.03-23.69-15.23c-9.83-11.39-10.67-28.1-10.3-41.38            c0.05-1.72,0.11-3.45,0.17-5.18c0.45-12.68,0.92-25.78-4.11-37.33c-0.11-0.26,0.01-0.55,0.26-0.66s0.55,0,0.66,0.26            c5.11,11.76,4.64,24.98,4.19,37.76c-0.06,1.73-0.12,3.46-0.17,5.18c-0.36,13.1,0.45,29.57,10.05,40.7            c6.08,7.04,14.86,11.07,23.36,14.98C268.266,289.307,270.035,290.127,271.785,290.967z" />
+                                                        <path style="fill:#231F20;"
+                                                            d="M295.375,314.837c-0.04,0.01-0.08,0.02-0.13,0.02c-0.22,0-0.42-0.15-0.48-0.37            c-0.74-2.7-1.96-5.27-3.7-7.71l0.97-0.34c1.72,2.47,2.95,5.06,3.69,7.79C295.805,314.487,295.646,314.767,295.375,314.837            z" />
+                                                    </g>
+                                                </g>
+                                                <path style="fill:#F06363;"
+                                                    d="M264.906,211.257c0.059,0.36,0.121,0.739-0.002,1.082c-0.275,0.767-1.387,0.932-2.067,0.483          c-0.68-0.449-0.997-1.279-1.171-2.075c-0.469-2.139-0.199-4.395,0.501-6.47c0.7-2.075,1.815-3.987,3.047-5.797          C264.324,202.671,264.219,207.027,264.906,211.257z" />
+                                                <path style="fill:#FF61B0;"
+                                                    d="M241.586,210.506c0,1.513,1.881,2.74,4.201,2.74c2.32,0,4.201-1.227,4.201-2.74          c0-1.514-1.881-2.74-4.201-2.74C243.467,207.766,241.586,208.992,241.586,210.506z" />
+                                                <path style="fill:#FF61B0;"
+                                                    d="M267.787,213.246c0,1.514,1.881,2.74,4.201,2.74c2.32,0,4.202-1.227,4.202-2.74          s-1.881-2.74-4.202-2.74C269.668,210.506,267.787,211.733,267.787,213.246z" />
+                                                <g>
+                                                    <path style="fill:#2B292A;"
+                                                        d="M251.731,198.486c-0.256,2.467,0.431,4.56,1.535,4.674c1.104,0.114,2.206-1.793,2.462-4.26           c0.256-2.467-0.431-4.56-1.535-4.674C253.089,194.112,251.987,196.019,251.731,198.486z" />
+                                                    <path style="fill:#2B292A;"
+                                                        d="M269.99,200.362c-0.256,2.467,0.431,4.56,1.535,4.674c1.104,0.115,2.206-1.793,2.462-4.26           c0.256-2.467-0.431-4.56-1.535-4.674C271.348,195.988,270.246,197.895,269.99,200.362z" />
+                                                </g>
+
+                                                <ellipse transform="matrix(0.973 -0.2307 0.2307 0.973 -39.0183 63.7592)"
+                                                    style="fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                                    cx="253.078" cy="198.693" rx="10.069" ry="10.069" />
+
+                                                <ellipse
+                                                    transform="matrix(0.9713 -0.2377 0.2377 0.9713 -39.321 71.2239)"
+                                                    style="fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                                    cx="275.735" cy="198.693" rx="10.069" ry="10.069" />
+                                                <path style="fill:#2B292A;"
+                                                    d="M251.472,187.476c2.612-0.671,5.434-0.497,7.944,0.488c-0.98-1.236-2.212-2.165-3.785-2.282          C254.058,185.565,252.624,186.398,251.472,187.476z" />
+                                                <path style="fill:#2B292A;"
+                                                    d="M269.362,187.822c2.568-0.822,5.396-0.814,7.959,0.024c-1.051-1.177-2.334-2.032-3.911-2.057          C271.832,185.764,270.449,186.68,269.362,187.822z" />
+                                                <path style="fill:#FFFFFF;"
+                                                    d="M262.593,218.252c0,0-5.47,0.437-8.391-4.609c0,0-1.89,6.973,1.241,8.154          C258.575,222.979,262.593,218.252,262.593,218.252z" />
+
+                                                <line
+                                                    style="fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                                    x1="263.147" y1="198.693" x2="265.666" y2="198.693" />
+
+                                                <line
+                                                    style="fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                                    x1="243.354" y1="196.098" x2="233.133" y2="186.818" />
+                                            </g>
+                                            <path style="fill:#2B292A;"
+                                                d="M290.066,182.44c-0.497-3.582-1.772-7.14-4.175-9.841c-1.23-1.383-2.786-2.506-4.491-3.222         l-2.926-7.811c0,0-9.565-3.573-17.042-6.9c-10.927-4.805-28.828-2.835-39.191,15.739c3.383,4.052,10.305,5.691,8.795,15.969         c-0.297,2.02,1.057,3.928,3.064,4.309c3.815,0.724,7.679,1.191,11.557,1.396c4.147,0.219,8.507,0.089,12.139-1.925         c3.243-1.798,5.534-4.894,7.615-7.963c0.208-0.307,0.416-0.615,0.624-0.923c2.403-3.557,7.646-3.892,10.291-0.511         c4.59,5.868,6.481,16.298,6.674,24.034C288.452,198.961,291.163,190.347,290.066,182.44z" />
+                                        </g>
+                                        <path style="fill:#FFB09E;"
+                                            d="M361.974,275.187c0,0,0.964-3.135,0.896-5.612c-0.04-1.462-1.308-2.593-2.77-2.593h-8.81        c0,0-0.382,3.911,7.441,3.53l-0.658,4.675H361.974z" />
+                                        <path style="fill:#FFB09E;"
+                                            d="M361.14,282.376c0,0,1.798-2.502,1.73-4.978c-0.04-1.462-1.308-2.593-2.77-2.593h-8.81        c0,0-0.003,3.339,6.119,3.53l-2.156,11.612C358.364,288.007,360.244,285.264,361.14,282.376z" />
+                                        <path style="fill:#FFB09E;"
+                                            d="M362.674,286.016c0.37-1.205,0.29-2.423-0.866-3.283c-0.543-0.404-1.221-0.592-1.897-0.592        h-8.622c0,0,1.049,3.54,7.441,3.53l-3.478,4.276l1.383,0.082C359.319,290.188,361.887,288.585,362.674,286.016z" />
+                                        <path style="fill:#FFCC00;"
+                                            d="M166.369,360.294c0,0-14.497,22.76,6.08,47.669c15.433,15.704,73.206,32.113,113.355-47.669        l14.711-51.697c0,0-5.348-5.657-15.66-2.22C270.069,311.304,182.197,373.036,166.369,360.294z" />
+                                        <g>
+                                            <path style="fill:#FFB09E;"
+                                                d="M358.187,410.176c0,0,9.414,13.007,17.145,18.38c1.315,0.914,3.01,1.075,4.498,0.485         c4.233-1.679,13.288-5.495,17.154-8.855c2.001-1.623,2.506-3.778-5.073-3.287c-5.205,0.041-16.648,0.648-22.57-13.488         L358.187,410.176z" />
+                                            <path style="fill:#FFCC00;"
+                                                d="M285.804,313.2l14.711-4.603c20.848,15.433,41.747,46.645,72.291,94.493l-13.808,11.101         c0,0-48.459-17.328-77.974-67.688L285.804,313.2z" />
+                                            <polygon style="fill:#FF9500;"
+                                                points="350.042,412.869 372.183,395.509 378.222,404.189 357.087,420.166        " />
+                                            <path style="fill:#4DABFF;"
+                                                d="M401.978,416.702c-1.373-3.874-6.227-3.874-8.054-3.874c-0.662,0-1.388,0.024-2.16,0.072         c0,0-1.189,0.014-1.607,0.014c-2.624,0-5.37-0.244-7.974-1.266c-2.566-1.008-5.469-0.573-7.515,1.276         c-1.599,1.445-3.336,2.738-5.186,3.856c-4.006,2.421-4.499,8.056-1.074,11.246c1.548,1.441,3.117,2.756,4.641,3.815         c1.457,1.013,3.175,1.548,4.968,1.548c1.129,0,2.236-0.212,3.288-0.629c6.109-2.423,14.222-6.035,18.253-9.511         C402.87,420.53,402.355,417.768,401.978,416.702z" />
+                                        </g>
+                                        <path
+                                            style="fill:none;stroke:#FF7B00;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                            d="M193.14,358.708        c0.863,6.874-1.551,14.087-6.377,19.057c-4.826,4.97-11.966,7.595-18.862,6.934" />
+                                        <path
+                                            style="fill:none;stroke:#FF7B00;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                            d="M188.28,362.76        c0.595,4.739-1.069,9.712-4.396,13.138c-3.327,3.426-8.249,5.236-13.003,4.78" />
+
+                                        <rect x="335.831" y="305.799"
+                                            transform="matrix(0.8655 0.5009 -0.5009 0.8655 200.8929 -127.634)"
+                                            style="fill:#2B292A;" width="4.585" height="8.962" />
+                                        <g>
+                                            <path style="fill:#2B292A;"
+                                                d="M252.933,282.067c-0.153,0-0.303-0.069-0.401-0.201c-7.93-10.651-10.711-25.233-7.257-38.055         c0.641-2.378,1.661-4.61,2.648-6.768c1.6-3.501,3.255-7.121,3.255-11.378c0-0.276,0.224-0.5,0.5-0.5         c0.276,0,0.5,0.224,0.5,0.5c0,4.474-1.701,8.195-3.346,11.793c-0.97,2.122-1.972,4.315-2.591,6.613         c-3.376,12.533-0.658,26.786,7.093,37.197c0.165,0.222,0.119,0.535-0.102,0.7         C253.142,282.035,253.037,282.067,252.933,282.067z" />
+                                        </g>
+                                        <path style="fill:#231F20;"
+                                            d="M229.8,188.298c0,1.792-1.452,3.244-3.244,3.244c-1.792,0-3.244-1.452-3.244-3.244        s1.452-3.244,3.244-3.244C228.348,185.054,229.8,186.507,229.8,188.298z" />
+                                    </g>
+                                    <path style="fill:#E04A95;"
+                                        d="M150.508,266.575c0,0,26.575-42.185,52.491-40.88c7.051,0.355,12.785,5.577,13.886,12.551       c4.905,31.063-28.003,114.3-62.842,143.547L150.508,374c0,0,66.9-71.801,59.007-136.105c-0.436-3.554-4.29-5.716-7.829-5.172       c-13.619,2.093-39.937,19.169-45.875,41.147L150.508,266.575z" />
+                                    <path style="fill:#E04A95;"
+                                        d="M137.289,414.191c0,0-27.28,8.754-35.224-5.779c-0.976-1.785-1.476-3.791-1.662-5.816       c-1.323-14.393-1.323-25.008-1.323-25.008l24.009-2.022L137.289,414.191z" />
+                                    <path style="fill:#FF61B0;"
+                                        d="M123.09,375.566c0,0-15.669,6.571-27.042,2.022c0,0-2.78-8.34,5.56-17.438       c8.34-9.098,13.395-19.663,13.395-19.663L123.09,375.566z" />
+                                    <path style="fill:#FF61B0;"
+                                        d="M164.395,400.557c-1.36,7.88-7.51,14.04-15.41,15.3c-13.15,2.11-29.25-1.95-31.74-9.08       c-3.37-9.67-6.26-63.64-6.26-71.83c0-8.05,5.58-18.58,15.84-28.01c0.18-0.17,0.36-0.34,0.54-0.5c2.6-2.35,4.56-5.22,6.05-8.23       c4.55-9.23,4.55-19.68,4.55-19.68s0.72-7.2,4.88-11.66c5.07-5.43,14.26-2.86,16.09,4.33       C165.316,296.187,169.576,370.617,164.395,400.557z" />
+                                    <path style="fill:#E04A95;"
+                                        d="M147.706,373.587c-0.05,2.22-0.14,4.54-1.23,6.48c-1.1,1.93-3.53,3.29-5.58,2.44       c-2.33-0.96-2.88-3.95-3.05-6.47c-0.85-12.98-0.18-26.06-1.6-38.99c-1.16-10.53-3.87-21.19-9.42-30.11       c0.18-0.17,0.36-0.34,0.54-0.5c2.6-2.35,4.56-5.22,6.05-8.23c3.62,4.51,6.28,9.8,8.15,15.3c2.5,7.36,3.64,15.1,4.48,22.82       C147.375,348.697,147.925,361.157,147.706,373.587z" />
+                                    <path style="fill:#FFB09E;"
+                                        d="M218.257,264.286l43.436,29.114c1.005,0.674,2.233,0.929,3.423,0.712l55.808-10.164       c0,0,9.161-5.586,12.736-10.725l16.311-7.82c0,0-2.031,7.955-9.831,8.714l-4.692,6.732l5.629-2.457l11.201,0.629       c0,0-1.762,4.468-8.558,3.461l-7.614,3.524l11.327-0.315l5.412,4.153c0,0-2.517,3.209-6.859,0.063l-7.488,0.629l8.873,3.335       c0,0,0.755,2.391-1.888,3.335l-11.893-0.566c0,0-8.379,4.08-18.713,1.665l-48,17.085c0,0-6.4,3.5-21.616-2.5       c-15.217-6-36.054-18.5-36.054-18.5L218.257,264.286z" />
+                                    <path style="fill:#4DABFF;"
+                                        d="M203.161,231.601c0,0-16.044,4.308-18.628,26.205c-1.467,16.981,5.907,24.578,22.441,35.974       l15.893-30.164C222.867,263.615,200.018,249.414,203.161,231.601z" />
+                                    <path style="fill:#2380D1;"
+                                        d="M211.286,299.199c0,0,1.658-22.382,18.069-33.875l-11.214-7.461       c0,0-17.139,13.712-18.148,34.279L211.286,299.199z" />
+                                </g>
+                            </g>
+
+                            <line
+                                style="fill:none;stroke:#FFFFFF;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                x1="355.401" y1="243.029" x2="372.807" y2="175.314" />
+                            <path style="fill:#FFFFFF;"
+                                d="M376.22,175.314c0,1.885-1.528,3.413-3.413,3.413c-1.885,0-3.413-1.528-3.413-3.413     s1.528-3.413,3.413-3.413C374.692,171.902,376.22,173.43,376.22,175.314z" />
+
+                            <line
+                                style="fill:none;stroke:#FFFFFF;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;"
+                                x1="355.401" y1="243.029" x2="429.125" y2="197.367" />
+                            <path style="fill:#FFFFFF;"
+                                d="M358.814,243.029c0,1.885-1.528,3.413-3.413,3.413c-1.885,0-3.413-1.528-3.413-3.413     s1.528-3.413,3.413-3.413C357.286,239.616,358.814,241.144,358.814,243.029z" />
+                            <circle style="fill:#FFFFFF;" cx="429.125" cy="197.367" r="3.413" />
+                            <g>
+                                <path style="fill:#FFCC00;"
+                                    d="M484.99,160.631c0,12.51-6.22,23.56-15.72,30.24c-6.01,4.22-13.33,6.69-21.22,6.69      c-7.89,0-15.21-2.47-21.21-6.69c-9.5-6.68-15.72-17.73-15.72-30.24c0-20.4,16.54-36.93,36.93-36.93      C468.45,123.701,484.99,140.231,484.99,160.631z" />
+                                <g>
+                                    <g>
+                                        <path style="fill:#4DABFF;"
+                                            d="M469.27,187.461v3.41c-6.01,4.22-13.33,6.69-21.22,6.69c-7.89,0-15.21-2.47-21.21-6.69v-3.41        c0-5.88,3.31-10.98,8.18-13.54c2.13-1.13,4.56-1.77,7.13-1.77h11.81C462.41,172.151,469.27,179.001,469.27,187.461z" />
+                                        <path style="fill:#F06363;"
+                                            d="M448.055,177.216L448.055,177.216c-1.661,0-3.007-1.346-3.007-3.007v-12.755h6.015v12.755        C451.062,175.87,449.715,177.216,448.055,177.216z" />
+                                        <g>
+                                            <g>
+                                                <path style="fill:#FFB09E;"
+                                                    d="M458.576,157.21c0.624-0.918,1.276-1.864,2.222-2.445c0.946-0.581,2.274-0.695,3.109,0.036          c0.486,0.426,0.738,1.082,0.747,1.729s-0.207,1.281-0.532,1.84c-0.608,1.045-1.613,1.853-2.765,2.222          c-1.152,0.369-2.439,0.296-3.541-0.201L458.576,157.21z" />
+                                            </g>
+                                        </g>
+                                    </g>
+                                    <path style="fill:#FF61B0;"
+                                        d="M435.113,149.36c-3.657,9.071-2.705,21.152,2.243,29.61c1.781,3.044,4.154,5.896,7.359,7.367       c2.189-4.775,3.103-9.941,2.553-15.165c-0.549-5.224-2.527-10.29-5.661-14.505C439.75,154.171,437.657,151.15,435.113,149.36z" />
+                                    <path style="fill:#FFB09E;"
+                                        d="M437.534,157.21c-0.624-0.918-1.276-1.864-2.222-2.445c-0.946-0.581-2.274-0.695-3.109,0.036       c-0.486,0.426-0.738,1.082-0.747,1.729c-0.009,0.646,0.207,1.281,0.532,1.84c0.608,1.045,1.613,1.853,2.765,2.222       c1.152,0.369,2.439,0.296,3.541-0.201L437.534,157.21z" />
+                                    <circle style="fill:#FFB09E;" cx="448.05" cy="157.445" r="12.446" />
+                                    <path style="fill:#FF61B0;"
+                                        d="M461.986,154.537c0,0.66-0.04,1.32-0.13,1.95c-6.13-0.04-11.66-2.58-15.62-6.65       c-2.41,4.49-6.33,8.05-11.08,9.99c-0.67-1.63-1.04-3.42-1.04-5.29c0-7.69,6.23-13.93,13.93-13.93       C455.746,140.607,461.986,146.847,461.986,154.537z" />
+                                    <path style="fill:#FF61B0;"
+                                        d="M445.539,187.194l5.129,3.557c0,0-0.57,3.338-4.315,3.338l-1.404-6.965L445.539,187.194z" />
+                                    <path style="fill:#2B292A;"
+                                        d="M446.354,187.123c0,0.775-0.629,1.404-1.404,1.404c-0.776,0-1.404-0.629-1.404-1.404       c0-0.776,0.629-1.404,1.404-1.404C445.725,185.719,446.354,186.348,446.354,187.123z" />
+                                </g>
+                            </g>
+                            <g>
+                                <path style="fill:#FF61B0;"
+                                    d="M412.205,133.401c0,12.5-6.22,23.55-15.72,30.24c-6,4.22-13.32,6.69-21.21,6.69      c-7.89,0-15.21-2.47-21.22-6.69c-9.5-6.69-15.72-17.74-15.72-30.24c0-20.4,16.54-36.93,36.94-36.93      C395.665,96.471,412.205,113.001,412.205,133.401z" />
+                                <g>
+                                    <path style="fill:#4DABFF;"
+                                        d="M369.639,105.988l4.392,6.042h1.24h1.239l4.392-6.042       C378.784,102.135,371.757,102.135,369.639,105.988z" />
+                                    <circle style="fill:#2B292A;" cx="375.27" cy="113.556" r="2.89" />
+                                    <path style="fill:#2B292A;"
+                                        d="M396.485,160.401v3.24c-6,4.22-13.32,6.69-21.21,6.69c-7.89,0-15.21-2.47-21.22-6.69v-3.24       c0-8.45,6.86-15.31,15.31-15.31h11.81C389.625,145.091,396.485,151.951,396.485,160.401z" />
+                                    <path style="fill:#F06363;"
+                                        d="M375.27,150.16L375.27,150.16c-1.661,0-3.007-1.346-3.007-3.007v-12.755h6.015v12.755       C378.278,148.814,376.931,150.16,375.27,150.16z" />
+                                    <g>
+                                        <path style="fill:#4DABFF;"
+                                            d="M389.205,127.477c0,0.77-0.06,1.53-0.18,2.26c-1.08,6.63-6.83,11.68-13.76,11.68        c-4.85,0-9.11-2.47-11.6-6.22c-1.47-2.21-2.33-4.87-2.33-7.72c0-7.69,6.23-13.93,13.93-13.93        C382.965,113.547,389.205,119.787,389.205,127.477z" />
+                                        <g>
+                                            <path style="fill:#FFB09E;"
+                                                d="M364.749,130.154c-0.624-0.918-1.276-1.864-2.222-2.445c-0.946-0.581-2.274-0.695-3.109,0.036         c-0.486,0.426-0.738,1.082-0.747,1.728c-0.009,0.646,0.207,1.281,0.532,1.84c0.608,1.045,1.613,1.853,2.765,2.222         c1.152,0.369,2.439,0.296,3.541-0.201L364.749,130.154z" />
+                                            <path style="fill:#FFB09E;"
+                                                d="M385.791,130.154c0.624-0.918,1.276-1.864,2.222-2.445c0.946-0.581,2.274-0.695,3.109,0.036         c0.486,0.426,0.738,1.082,0.747,1.728c0.009,0.646-0.207,1.281-0.532,1.84c-0.608,1.045-1.613,1.853-2.765,2.222         c-1.152,0.369-2.439,0.296-3.541-0.201L385.791,130.154z" />
+                                        </g>
+
+                                        <ellipse transform="matrix(0.9227 -0.3856 0.3856 0.9227 -21.2572 154.7877)"
+                                            style="fill:#FFB09E;" cx="375.266" cy="130.389" rx="12.446" ry="12.446" />
+                                        <path style="fill:#4DABFF;"
+                                            d="M389.205,127.477c0,0.77-0.06,1.53-0.18,2.26c-0.43,0.04-0.87,0.06-1.31,0.06        c-5,0-9.36-2.64-11.82-6.58c-0.85,6.3-5.89,11.27-12.23,11.98c-1.47-2.21-2.33-4.87-2.33-7.72c0-7.69,6.23-13.93,13.93-13.93        C382.965,113.547,389.205,119.787,389.205,127.477z" />
+                                    </g>
+                                </g>
+                            </g>
+                            <path style="fill:#FFFFFF;"
+                                d="M181.852,150.997H41.469c6.89-8.344,18.6-13.952,29.39-13.143     c0.178-8.998,3.542-17.913,10.273-23.887c6.731-5.974,16.512-8.581,25.147-6.044c8.635,2.537,15.627,10.441,16.408,19.407     c3.631-4.904,9.639-6.987,15.55-5.473c5.912,1.514,10.656,6.834,11.484,12.881c6.218-1.744,13.684-1.352,19.284,1.864     C174.605,139.819,180.225,144.747,181.852,150.997z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M491.031,274.49H385.031c5.203-6.3,14.044-10.535,22.192-9.924     c0.134-6.794,2.675-13.526,7.757-18.037c5.083-4.511,12.468-6.479,18.988-4.564c6.52,1.916,11.8,7.883,12.389,14.654     c2.742-3.703,7.278-5.276,11.742-4.133c4.464,1.143,8.046,5.161,8.671,9.726c4.695-1.317,10.333-1.021,14.561,1.408     C485.56,266.05,489.803,269.771,491.031,274.49z" />
+                        </g>
+                        <path style="fill:#FF9500;"
+                            d="M287.038,355.959c0,0,4.791-9.871,6.368-27.673c0,0,0.431,16.509-4.434,30.421L287.038,355.959z" />
+                        <g>
+                            <path style="fill:#FFFFFF;"
+                                d="M106.303,190.792c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C104.169,186.026,106.303,188.16,106.303,190.792z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M127.855,190.792c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C125.722,186.026,127.855,188.16,127.855,190.792z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M149.408,190.792c0,2.632-2.134,4.766-4.766,4.766s-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766S149.408,188.16,149.408,190.792z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M106.303,206.594c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C104.169,201.828,106.303,203.962,106.303,206.594z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M127.855,206.594c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C125.722,201.828,127.855,203.962,127.855,206.594z" />
+                            <circle style="fill:#FFFFFF;" cx="144.642" cy="206.594" r="4.766" />
+                        </g>
+                        <g>
+                            <path style="fill:#FFFFFF;"
+                                d="M372.419,298.475c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C370.285,293.71,372.419,295.844,372.419,298.475z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M393.971,298.475c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C391.837,293.71,393.971,295.844,393.971,298.475z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M415.523,298.475c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C413.39,293.71,415.523,295.844,415.523,298.475z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M372.419,314.278c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C370.285,309.512,372.419,311.646,372.419,314.278z" />
+                            <path style="fill:#FFFFFF;"
+                                d="M393.971,314.278c0,2.632-2.134,4.766-4.766,4.766c-2.632,0-4.766-2.134-4.766-4.766     c0-2.632,2.134-4.766,4.766-4.766C391.837,309.512,393.971,311.646,393.971,314.278z" />
+                            <circle style="fill:#FFFFFF;" cx="410.758" cy="314.278" r="4.766" />
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </div>
+        <div class="message"></div>
+        <div class="additional-message"></div>
+        <div class="retry">
+            <button class="asgButton" onclick="location.reload()"></button>
+        </div>
+        <div class="bar"></div>
+    </div>
+
+    <div class="bottom">
+        <div class="bottomBtn"></div>
+        <div class="bottomBtn"></div>
+        <div class="bottomBtn"></div>
+        <div class="bottomBtn"></div>
+        <div class="bottomBtn"></div>
+    </div>
+
+    <script>
+        // Translation strings
+        const translations = {
+            en: {
+                message: "Connect to the internet",
+                additionalMessage: "You're offline. Check your connection.",
+                retry: "Retry",
+                bar: "No internet connection",
+            },
+            es: {
+                message: "Conéctate a Internet",
+                additionalMessage: "Estás sin conexión. Verifica tu conexión.",
+                retry: "Reintentar",
+                bar: "Sin conexión a Internet",
+            },
+            fr: {
+                message: "Se connecter à Internet",
+                additionalMessage: "Vous êtes hors ligne. Vérifiez votre connexion.",
+                retry: "Réessayer",
+                bar: "Pas de connexion internet",
+            },
+            de: {
+                message: "Stellen Sie eine Internetverbindung her",
+                additionalMessage: "Sie sind offline. Überprüfen Sie Ihre Verbindung.",
+                retry: "Wiederholen",
+                bar: "Keine Internetverbindung",
+            },
+            "zh-CN": {
+                message: "连接到互联网",
+                additionalMessage: "您处于离线状态。请检查您的连接。",
+                retry: "重试",
+                bar: "没有互联网连接",
+            },
+            "zh-TW": {
+                message: "連接到網路",
+                additionalMessage: "你離線了。檢查您的連線。",
+                retry: "重試",
+                bar: "沒有網路連線",
+            },
+            ar: {
+                message: "اتصل بالإنترنت",
+                additionalMessage: "أنت غير متصل بالإنترنت. تحقق من اتصالك.",
+                retry: "إعادة المحاولة",
+                bar: "لا يوجد اتصال بالإنترنت",
+            },
+            hi: {
+                message: "इंटरनेट से कनेक्ट करें",
+                additionalMessage: "आप ऑफ़लाइन हैं। अपना कनेक्शन जांचें।",
+                retry: "पुनः प्रयास करें",
+                bar: "इंटरनेट कनेक्शन नहीं है",
+            },
+            ru: {
+                message: "Подключитесь к Интернету",
+                additionalMessage: "Вы не в сети. Проверьте подключение.",
+                retry: "Повторить",
+                bar: "Нет подключения к Интернету",
+            },
+            pt: {
+                message: "Conecte-se à internet",
+                additionalMessage: "Você está offline. Verifique sua conexão.",
+                retry: "Tentar novamente",
+                bar: "Sem conexão com a internet",
+            },
+            it: {
+                message: "Connettiti a Internet",
+                additionalMessage: "Sei offline. Controlla la tua connessione.",
+                retry: "Riprova",
+                bar: "Nessuna connessione a Internet",
+            },
+            ja: {
+                message: "インターネットに接続してください",
+                additionalMessage: "オフラインです。接続を確認してください。",
+                retry: "再試行",
+                bar: "インターネット接続がありません",
+            },
+            ko: {
+                message: "인터넷에 연결하세요",
+                additionalMessage: "오프라인 상태입니다. 연결을 확인하세요.",
+                retry: "재시도",
+                bar: "인터넷 연결 없음",
+            },
+            tr: {
+                message: "İnternete bağlanın",
+                additionalMessage: "Çevrimdışısınız. Bağlantınızı kontrol edin.",
+                retry: "Tekrar dene",
+                bar: "İnternet bağlantısı yok",
+            },
+            nl: {
+                message: "Maak verbinding met internet",
+                additionalMessage: "Je bent offline. Controleer je verbinding.",
+                retry: "Opnieuw proberen",
+                bar: "Geen internetverbinding",
+            },
+            sv: {
+                message: "Anslut till internet",
+                additionalMessage: "Du är offline. Kontrollera din anslutning.",
+                retry: "Försök igen",
+                bar: "Ingen internetanslutning",
+            },
+            pl: {
+                message: "Połącz się z internetem",
+                additionalMessage: "Jesteś offline. Sprawdź swoje połączenie.",
+                retry: "Spróbuj ponownie",
+                bar: "Brak połączenia z internetem",
+            },
+            id: {
+                message: "Hubungkan ke internet",
+                additionalMessage: "Anda sedang offline. Periksa koneksi Anda.",
+                retry: "Coba lagi",
+                bar: "Tidak ada koneksi internet",
+            },
+            th: {
+                message: "เชื่อมต่อกับอินเทอร์เน็ต",
+                additionalMessage: "คุณออฟไลน์ ตรวจสอบการเชื่อมต่อของคุณ",
+                retry: "ลองอีกครั้ง",
+                bar: "ไม่มีการเชื่อมต่ออินเทอร์เน็ต",
+            },
+            vi: {
+                message: "Kết nối với internet",
+                additionalMessage: "Bạn đang ngoại tuyến. Kiểm tra kết nối của bạn.",
+                retry: "Thử lại",
+                bar: "Không có kết nối internet",
+            },
+            ms: {
+                message: "Sambung ke internet",
+                additionalMessage: "Anda berada di luar talian. Periksa sambungan anda.",
+                retry: "Cuba lagi",
+                bar: "Tiada sambungan internet",
+            },
+            ur: {
+                message: "انٹرنیٹ سے جڑیں",
+                additionalMessage: "آپ آف لائن ہیں۔ اپنا کنکشن چیک کریں۔",
+                retry: "دوبارہ کوشش کریں",
+                bar: "انٹرنیٹ کنکشن نہیں ہے",
+            },
+        };
+
+        // Detect browser language
+        const userLang = navigator.language; // Full language code (e.g., 'zh-CN', 'zh-TW', 'en-US')
+        const langCode = translations[userLang] ? userLang : navigator.language.slice(0, 2); // Try full code, then fallback to 2 letters
+        const selectedLang = translations[langCode] || translations.en;
+
+        // Set translations
+        document.querySelector('.message').textContent = selectedLang.message;
+        document.querySelector('.additional-message').textContent = selectedLang.additionalMessage;
+        document.querySelector('.asgButton').textContent = selectedLang.retry;
+        document.querySelector('.bar').textContent = selectedLang.bar;
+    </script>
+
+</body>
+
+</html>

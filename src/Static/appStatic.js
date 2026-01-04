@@ -1,26 +1,16 @@
-import React, { Suspense } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router";
-import routes from "../ARoutes/AFRoutes.js";
-import LoadingFallback from "../LoadingFallback.js";
+import React, { useState } from "react";
+import ARoutesStatic from "../Routes/ARoutesStatic.js";
+import LoadingContext from "../Utils/LoadingContext.js";
+import LoadingIndicator from "../Components/Loading/LoadingIndicator.js";
 
-import Header from "../Components/Header/Header.js";
-import Footer from "../Components/Footer/Footer.js";
 
-function appStatic() {
+function appStatic({ context }) {
+  const [loading, setLoading] = useState(false);
   return (
-    <Router>
-      <Suspense fallback={<LoadingFallback />}>
-        <Header />
-        <Routes>
-          {/* Pages Routes */}
-          {routes.map(({ path, element: Element }, index) => (
-            <Route key={index} path={path} element={<Element />} />
-          ))}
-          {/* Pages Routes */}
-        </Routes>
-        <Footer />
-      </Suspense>
-    </Router>
+    <LoadingContext.Provider value={{ loading, setLoading }}>
+      {loading && <LoadingIndicator />}
+      <ARoutesStatic context={context} />
+    </LoadingContext.Provider>
   );
 }
 export default appStatic;

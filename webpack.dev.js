@@ -3,10 +3,12 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const crypto = require("crypto");
 
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
+  devtool: "cheap-module-source-map",
   devServer: {
     static: {
       directory: path.join(__dirname, "dev"),
@@ -18,6 +20,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: `${__dirname}/dev`,
+    publicPath: "/",
     clean: true,
   },
   module: {
@@ -89,6 +92,21 @@ module.exports = {
     new htmlWebpackPlugin({
       title: "AFront",
       template: `${__dirname}/dev/index.html`,
+      filename: "index.html",
+      hash: true, // This will add the hash in the injected scripts
+      templateParameters: (compilation) => {
+        const hash = crypto.createHash("sha1");
+        hash.update(compilation.hash);
+        const sha1Hash = hash.digest("hex");
+        return {
+          htmlWebpackPlugin: {
+            options: {
+              title: "AFront",
+              buildTag: `dev-${sha1Hash}`, // Set the build tag with the hash for dev
+            },
+          },
+        };
+      },
     }),
   ],
 };

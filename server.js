@@ -7,6 +7,8 @@ const app = express();
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 
+app.set("trust proxy", 1);
+
 // Set up rate limiter: maximum of 100 requests per 15 minutes
 const limiter = RateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

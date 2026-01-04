@@ -1,12 +1,12 @@
 {
-  "name": "afront",
-  "version": "1.0.19",
+  "name": "@Asggen/afront",
+  "version": "1.0.20",
   "description": "AFront is a front-end JavaScript library designed to create seamless server-side rendered (SSSR) websites.",
   "main": "webpack.dev.js",
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.prod.js && webpack --config webpack.post-prod.js",
     "build:ssr": "webpack --config webpack.ssr.prod.js",
-    "build:alt": "webpack --config webpack.build-prod.js",
+    "build:alt": "webpack --config webpack.build-prod.js && webpack --config webpack.post-prod-static.js --stats-error-details",
     "prod:ssr": "node build-prod-ssr/ssr.prod.js",
     "start": "webpack serve --config webpack.dev.js",
     "static": "node server.js"
@@ -41,10 +41,11 @@
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "afront": "^1.0.19",
+    "afront": "^1.0.15",
     "asggen-headtags": "^1.0.3",
     "babel-plugin-css-modules-transform": "^1.6.2",
     "babel-plugin-dynamic-import-node": "^2.3.3",
+    "banner-webpack-after-content": "^1.0.3",
     "copy-webpack-plugin": "^12.0.2",
     "dotenv": "^16.4.5",
     "express-rate-limit": "^7.4.1",
@@ -60,7 +61,7 @@
     "readline-sync": "^1.4.10",
     "styled-components": "^6.1.13",
     "terser-webpack-plugin": "^5.3.10",
-    "tmp": "^0.2.4"
+    "tmp": "^0.2.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.9",

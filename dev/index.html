@@ -1,14 +1,82 @@
 <!DOCTYPE html>
-<html data-build='<%= htmlWebpackPlugin.options.buildTag %>' lang="en">
-<head>
+<html data-build="<%= htmlWebpackPlugin.options.buildTag %>">
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><%= htmlWebpackPlugin.options.title %></title>
-    <meta name="title" content="Default title">
-    <meta name="description" content="Default description">
-    <meta name="keywords" content="default, keywords">
-</head>
-<body>
+    <meta name="title" content="Default title" />
+    <meta name="description" content="Default description" />
+    <meta name="keywords" content="default, keywords" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+      }
+
+      #loading {
+        position: fixed;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        z-index: 9999;
+      }
+
+      .loadingLogo {
+        overflow: hidden;
+        width: 9.375rem;
+        height: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- <div id="loading">
+        <svg class="loadingLogo" width="512" height="512" viewBox="0 0 512 512" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M411.773 512H512L449.859 256.601L449.566 255.399L387.425 0H278.494L139.574 255.399L139.247 256L138.92 256.601L0 512H109.841L274.022 210.148H338.33L411.773 512Z"
+                fill="black" />
+        </svg>
+    </div> -->
     <asggenapp id="asggen"></asggenapp>
-</body>
+    <script>
+      window.addEventListener("load", () => {
+        const loadingElement = document.getElementById("loading");
+        if (loadingElement) {
+          setTimeout(() => {
+            loadingElement.style.display = "none";
+          }, 300);
+        }
+      });
+    </script>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+              console.log(
+                "Service Worker registered with scope:",
+                registration.scope
+              );
+            })
+            .catch((error) => {
+              console.error("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
+  </body>
 </html>

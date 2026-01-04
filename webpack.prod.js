@@ -12,6 +12,7 @@ module.exports = {
   output: {
     filename: "static/js/[name]-[contenthash].js",
     path: path.resolve(__dirname, "build-prod"),
+    publicPath: "/",
     clean: true,
   },
   module: {
@@ -72,6 +73,9 @@ module.exports = {
     minimizer: [
       new TerserWebpackPlugin({
         terserOptions: {
+          compress: {
+            drop_console: false,
+          },
           format: {
             comments: false,
           },
@@ -80,6 +84,9 @@ module.exports = {
       }),
       new CssMinimizerPlugin(),
     ],
+    splitChunks: {
+      chunks: "all", // Automatically split vendor and app code
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -90,6 +97,8 @@ module.exports = {
       minify: {
         removeComments: true,
         collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
       },
       templateParameters: (compilation) => {
         const hash = crypto.createHash("sha1");
@@ -116,12 +125,12 @@ module.exports = {
         { from: "dev/manifest.json", to: "manifest.json" },
         { from: "dev/style.css", to: "style.css" },
         { from: "dev/robots.txt", to: "robots.txt" },
+        { from: "dev/service-worker.js", to: "service-worker.js" },
+        { from: "dev/offline.html", to: "offline.html" },
       ],
     }),
   ],
   performance: {
     hints: "warning",
-    maxEntrypointSize: 400000,
-    maxAssetSize: 400000,
   },
 };

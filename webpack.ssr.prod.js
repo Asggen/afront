@@ -10,6 +10,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "build-prod-ssr"),
     filename: "ssr.prod.js",
+    publicPath: "/",
     clean: true,
     libraryTarget: "commonjs2",
   },
@@ -72,6 +73,9 @@ module.exports = {
     minimizer: [
       new TerserWebpackPlugin({
         terserOptions: {
+          compress: {
+            drop_console: false,
+          },
           format: {
             comments: false,
           },

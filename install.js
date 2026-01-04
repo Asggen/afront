@@ -8,7 +8,7 @@ const AdmZip = require('adm-zip');
 const readline = require('readline');
 
 // Configuration
-const GITHUB_ZIP_URL = 'https://github.com/Asggen/afront/archive/refs/tags/v1.0.19.zip'; // Updated URL
+const GITHUB_ZIP_URL = 'https://github.com/Asggen/afront/archive/refs/tags/v1.0.20.zip'; // Updated URL
 
 // Define files to skip
 const SKIP_FILES = ['FUNDING.yml', 'CODE_OF_CONDUCT.md', 'SECURITY.md', 'install.js', '.npmrc'];
@@ -101,7 +101,7 @@ const extractZip = (zipPath, extractTo) => {
 const runNpmInstall = (directory) => {
   return new Promise((resolve, reject) => {
     const stopSpinner = spinner('Running npm install');
-    exec('npm install', { cwd: directory }, (err, stdout, stderr) => {
+    exec('npm install --legacy-peer-deps --no-audit --no-fund', { cwd: directory }, (err, stdout, stderr) => {
       if (err) {
         stopSpinner();
         console.error('Error running npm install:', stderr);
