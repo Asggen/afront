@@ -138,11 +138,18 @@ const isPathInside = (root, target) => {
 const safeUnlink = async (targetPath, extraAllowedRoots = []) => {
   const allowed = [process.cwd(), os.tmpdir(), ...extraAllowedRoots].map((p) => path.resolve(p));
   const resolved = path.resolve(targetPath);
+
+  // Check for null bytes to prevent injection attacks
+  if (resolved.includes('\0')) {
+    throw new Error(`Refusing to unlink due to null byte in path: ${resolved}`);
+  }
+
   if (!allowed.some((root) => isPathInside(root, resolved))) {
     throw new Error(`Refusing to unlink outside allowed roots: ${resolved}`);
   }
+
   try {
-    // refuse to unlink symlinks or directories to avoid TOCTOU/symlink attacks
+    // Refuse to unlink symlinks or directories to avoid TOCTOU/symlink attacks
     const stats = await fs.promises.lstat(resolved);
     if (stats.isSymbolicLink()) {
       throw new Error(`Refusing to unlink symbolic link: ${resolved}`);
@@ -151,9 +158,10 @@ const safeUnlink = async (targetPath, extraAllowedRoots = []) => {
       throw new Error(`Refusing to unlink a directory: ${resolved}`);
     }
 
+    // Perform the unlink operation
     await fs.promises.unlink(resolved);
   } catch (e) {
-    // ignore missing file errors
+    // Ignore missing file errors
     if (e.code === 'ENOENT') return;
     throw e;
   }
