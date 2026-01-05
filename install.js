@@ -142,10 +142,20 @@ const safeUnlink = async (targetPath, extraAllowedRoots = []) => {
     throw new Error(`Refusing to unlink outside allowed roots: ${resolved}`);
   }
   try {
+    // refuse to unlink symlinks or directories to avoid TOCTOU/symlink attacks
+    const stats = await fs.promises.lstat(resolved);
+    if (stats.isSymbolicLink()) {
+      throw new Error(`Refusing to unlink symbolic link: ${resolved}`);
+    }
+    if (stats.isDirectory()) {
+      throw new Error(`Refusing to unlink a directory: ${resolved}`);
+    }
+
     await fs.promises.unlink(resolved);
   } catch (e) {
     // ignore missing file errors
-    if (e.code !== 'ENOENT') throw e;
+    if (e.code === 'ENOENT') return;
+    throw e;
   }
 };
 
