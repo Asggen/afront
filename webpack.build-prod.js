@@ -97,14 +97,14 @@ module.exports = {
         minifyJS: true,
       },
       templateParameters: (compilation, options) => {
-        const hash = crypto.createHash("sha1");
+        const hash = crypto.createHash("sha256");
         hash.update(compilation.hash);
-        const sha1Hash = hash.digest("hex");
+        const sha256Hash = hash.digest("hex");
         return {
           htmlWebpackPlugin: {
             options: {
               title: "AFront",
-              buildTag: `prod-${sha1Hash}`,
+              buildTag: `prod-${sha256Hash}`,
             },
           },
         };

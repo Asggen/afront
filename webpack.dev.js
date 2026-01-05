@@ -95,14 +95,14 @@ module.exports = {
       filename: "index.html",
       hash: true, // This will add the hash in the injected scripts
       templateParameters: (compilation) => {
-        const hash = crypto.createHash("sha1");
+        const hash = crypto.createHash("sha256");
         hash.update(compilation.hash);
-        const sha1Hash = hash.digest("hex");
+        const sha256Hash = hash.digest("hex");
         return {
           htmlWebpackPlugin: {
             options: {
               title: "AFront",
-              buildTag: `dev-${sha1Hash}`, // Set the build tag with the hash for dev
+              buildTag: `dev-${sha256Hash}`, // Set the build tag with the hash for dev
             },
           },
         };
