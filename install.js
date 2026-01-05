@@ -341,6 +341,15 @@ const main = async () => {
 
     await moveFiles(extractedFolderPath, destDir);
 
+    // Remove any bundled lockfiles from the extracted archive to avoid integrity
+    // checksum mismatches originating from the release zip's lockfile.
+    try {
+      await safeUnlink(path.join(destDir, 'package-lock.json')).catch(() => {});
+      await safeUnlink(path.join(destDir, 'npm-shrinkwrap.json')).catch(() => {});
+    } catch (e) {
+      // ignore
+    }
+
     await runNpmInstall(destDir);
 
     rl.close();
