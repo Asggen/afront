@@ -313,6 +313,29 @@ const main = async () => {
       folderName = await promptForFolderName();
     }
 
+    // Sanitize the provided folder name to prevent path traversal or absolute paths
+    const sanitizeFolderName = (name) => {
+      if (!name) return '';
+      // If user provided '.', use current dir basename
+      if (name === '.') return path.basename(process.cwd());
+      // Disallow absolute paths
+      if (path.isAbsolute(name)) {
+        console.warn('Absolute paths are not allowed for destination; using basename.');
+        name = path.basename(name);
+      }
+      // Disallow parent traversal and nested paths
+      if (name === '..' || name.includes(path.sep) || name.includes('..')) {
+        console.warn('Path traversal detected in destination name; using basename of input.');
+        name = path.basename(name);
+      }
+      // Finally, ensure it's a single path segment
+      name = path.basename(name);
+      if (!name) throw new Error('Invalid destination folder name');
+      return name;
+    };
+
+    folderName = sanitizeFolderName(folderName);
+
     const destDir = path.join(process.cwd(), folderName);
 
     if (fs.existsSync(destDir)) {
