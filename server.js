@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const RateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 require("dotenv").config();
 
 const app = express();
@@ -8,6 +9,12 @@ const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 
 app.set("trust proxy", 1);
+
+// Disable the X-Powered-By header to avoid exposing Express
+app.disable("x-powered-by");
+
+// Use Helmet to set various HTTP headers for better security
+app.use(helmet());
 
 // Set up rate limiter: maximum of 100 requests per 15 minutes
 const limiter = RateLimit({
