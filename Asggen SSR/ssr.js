@@ -5,6 +5,7 @@ require("@babel/register")({
 const express = require("express");
 const fs = require("fs").promises;
 const path = require("path");
+const helmet = require("helmet");
 const React = require("react");
 const ReactDOMServer = require("react-dom/server");
 const { StaticRouter } = require("react-router");
@@ -15,6 +16,12 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
+
+// Disable the X-Powered-By header to avoid exposing Express
+app.disable("x-powered-by");
+
+// Use Helmet to set various HTTP headers for better security
+app.use(helmet());
 
 const buildProdPath = path.resolve(__dirname, "../build-prod");
 
