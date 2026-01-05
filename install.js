@@ -158,31 +158,59 @@ const moveFiles = (srcPath, destPath) => {
       let pending = files.length;
       if (!pending) return resolve();
       files.forEach((file) => {
-        if (SKIP_FILES.includes(file)) {
+        // Normalize and validate file name to avoid path traversal
+        const fileName = path.basename(file);
+        if (SKIP_FILES.includes(fileName)) {
           if (!--pending) resolve();
           return;
         }
 
-        const srcFile = path.join(srcPath, file);
-        const destFile = path.join(destPath, file);
-        fs.stat(srcFile, (err, stats) => {
+        const srcRoot = path.resolve(srcPath);
+        const destRoot = path.resolve(destPath);
+        const resolvedSrc = path.resolve(srcPath, file);
+        const resolvedDest = path.resolve(destPath, file);
+
+        // Ensure resolved paths are inside their respective roots
+        if (
+          !(resolvedSrc === srcRoot || resolvedSrc.startsWith(srcRoot + path.sep)) ||
+          !(resolvedDest === destRoot || resolvedDest.startsWith(destRoot + path.sep))
+        ) {
+          console.warn(`Skipping suspicious path: ${file}`);
+          if (!--pending) resolve();
+          return;
+        }
+
+        // Use lstat to detect symlinks and refuse to follow them
+        fs.lstat(resolvedSrc, (err, stats) => {
           if (err) {
             return reject(err);
           }
+
+          if (stats.isSymbolicLink()) {
+            console.warn(`Skipping symbolic link for safety: ${resolvedSrc}`);
+            if (!--pending) resolve();
+            return;
+          }
+
           if (stats.isDirectory()) {
-            createDirIfNotExists(destFile)
-              .then(() => moveFiles(srcFile, destFile))
+            createDirIfNotExists(resolvedDest)
+              .then(() => moveFiles(resolvedSrc, resolvedDest))
               .then(() => {
                 if (!--pending) resolve();
               })
               .catch(reject);
           } else {
-            fs.rename(srcFile, destFile, (err) => {
-              if (err) {
-                return reject(err);
-              }
-              if (!--pending) resolve();
-            });
+            // Ensure destination directory exists before renaming
+            createDirIfNotExists(path.dirname(resolvedDest))
+              .then(() => {
+                fs.rename(resolvedSrc, resolvedDest, (err) => {
+                  if (err) {
+                    return reject(err);
+                  }
+                  if (!--pending) resolve();
+                });
+              })
+              .catch(reject);
           }
         });
       });
