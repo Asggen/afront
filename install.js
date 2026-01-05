@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { https } = require('follow-redirects');
 const { exec } = require('child_process');
+const os = require('os');
 const tmp = require('tmp');
 const AdmZip = require('adm-zip');
 const readline = require('readline');
@@ -69,7 +70,8 @@ const downloadFile = (url, destination) => {
         });
       });
     }).on('error', (err) => {
-      fs.unlink(destination, () => reject(err));
+      // attempt to remove partial download only if it's inside allowed temp locations
+      safeUnlink(destination).finally(() => reject(err));
     });
   });
 };
@@ -127,6 +129,34 @@ const createDirIfNotExists = (dirPath) => {
   });
 };
 
+const isPathInside = (root, target) => {
+  const r = path.resolve(root);
+  const t = path.resolve(target);
+  return t === r || t.startsWith(r + path.sep);
+};
+
+const safeUnlink = async (targetPath, extraAllowedRoots = []) => {
+  const allowed = [process.cwd(), os.tmpdir(), ...extraAllowedRoots].map((p) => path.resolve(p));
+  const resolved = path.resolve(targetPath);
+  if (!allowed.some((root) => isPathInside(root, resolved))) {
+    throw new Error(`Refusing to unlink outside allowed roots: ${resolved}`);
+  }
+  try {
+    await fs.promises.unlink(resolved);
+  } catch (e) {
+    // ignore missing file errors
+    if (e.code !== 'ENOENT') throw e;
+  }
+};
+
+const safeRm = (dirPath, cb) => {
+  const resolved = path.resolve(dirPath);
+  if (!isPathInside(process.cwd(), resolved)) {
+    return cb(new Error(`Refusing to remove directory outside current working directory: ${resolved}`));
+  }
+  fs.rm(resolved, { recursive: true, force: true }, cb);
+};
+
 // Perform an atomic-safe move: open source with O_NOFOLLOW, stream to a temp file, fsync, then rename
 const safeMoveFile = async (resolvedSrc, resolvedDest) => {
   const srcFlags = fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW;
@@ -174,7 +204,7 @@ const safeMoveFile = async (resolvedSrc, resolvedDest) => {
       if (destHandle) await destHandle.close();
     } catch (e) {}
     try {
-      await fs.promises.unlink(tmpName);
+      await safeUnlink(tmpName, [path.dirname(resolvedDest)]).catch(() => {});
     } catch (e) {}
     try {
       if (srcHandle) await srcHandle.close();
@@ -196,10 +226,8 @@ const promptForReplace = async (dirPath) => {
 const removeDir = (dirPath) => {
   return new Promise((resolve, reject) => {
     console.log(`Removing existing directory: ${dirPath}`);
-    fs.rm(dirPath, { recursive: true, force: true }, (err) => {
-      if (err) {
-        return reject(err);
-      }
+    safeRm(dirPath, (err) => {
+      if (err) return reject(err);
       resolve();
     });
   });
