@@ -240,9 +240,29 @@ const removeDir = (dirPath) => {
   });
 };
 
+const SAFE_READDIR_ROOT = path.resolve(os.tmpdir());
+
+const safeReaddir = (dirPath, cb) => {
+  const resolved = path.resolve(dirPath);
+
+  if (!resolved.startsWith(SAFE_READDIR_ROOT + path.sep)) {
+    return cb(new Error(`Blocked readdir outside safe root: ${resolved}`));
+  }
+
+  fs.lstat(resolved, (err, stats) => {
+    if (err) return cb(err);
+    if (!stats.isDirectory()) {
+      return cb(new Error(`Not a directory: ${resolved}`));
+    }
+
+    fs.readdir(resolved, cb);
+  });
+};
+
+
 const moveFiles = (srcPath, destPath) => {
   return new Promise((resolve, reject) => {
-    fs.readdir(srcPath, (err, files) => {
+    safeReaddir(srcPath, (err, files) => {
       if (err) {
         return reject(err);
       }
