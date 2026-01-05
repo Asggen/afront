@@ -127,6 +127,62 @@ const createDirIfNotExists = (dirPath) => {
   });
 };
 
+// Perform an atomic-safe move: open source with O_NOFOLLOW, stream to a temp file, fsync, then rename
+const safeMoveFile = async (resolvedSrc, resolvedDest) => {
+  const srcFlags = fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW;
+  let srcHandle;
+  let destHandle;
+  const tmpName = `${resolvedDest}.tmp-${process.pid}-${Date.now()}`;
+  try {
+    srcHandle = await fs.promises.open(resolvedSrc, srcFlags);
+  } catch (err) {
+    throw err;
+  }
+
+  try {
+    const stats = await srcHandle.stat();
+    if (stats.isDirectory()) {
+      await srcHandle.close();
+      throw new Error('Source is a directory');
+    }
+
+    await createDirIfNotExists(path.dirname(resolvedDest));
+
+    destHandle = await fs.promises.open(tmpName, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC, stats.mode);
+
+    const bufferSize = 64 * 1024;
+    const buffer = Buffer.allocUnsafe(bufferSize);
+    let position = 0;
+    while (true) {
+      const { bytesRead } = await srcHandle.read(buffer, 0, bufferSize, position);
+      if (!bytesRead) break;
+      let written = 0;
+      while (written < bytesRead) {
+        const { bytesWritten } = await destHandle.write(buffer, written, bytesRead - written);
+        written += bytesWritten;
+      }
+      position += bytesRead;
+    }
+
+    await destHandle.sync();
+    await destHandle.close();
+    await srcHandle.close();
+
+    await fs.promises.rename(tmpName, resolvedDest);
+  } catch (err) {
+    try {
+      if (destHandle) await destHandle.close();
+    } catch (e) {}
+    try {
+      await fs.promises.unlink(tmpName);
+    } catch (e) {}
+    try {
+      if (srcHandle) await srcHandle.close();
+    } catch (e) {}
+    throw err;
+  }
+};
+
 const promptForFolderName = async () => {
   const answer = await askQuestion('AFront: Enter the name of the destination folder: ');
   return answer;
@@ -200,17 +256,16 @@ const moveFiles = (srcPath, destPath) => {
               })
               .catch(reject);
           } else {
-            // Ensure destination directory exists before renaming
-            createDirIfNotExists(path.dirname(resolvedDest))
-              .then(() => {
-                fs.rename(resolvedSrc, resolvedDest, (err) => {
-                  if (err) {
-                    return reject(err);
-                  }
-                  if (!--pending) resolve();
-                });
-              })
-              .catch(reject);
+                // Use atomic-safe move: copy from a non-following FD to temp file, then rename
+                createDirIfNotExists(path.dirname(resolvedDest))
+                  .then(() => {
+                    safeMoveFile(resolvedSrc, resolvedDest)
+                      .then(() => {
+                        if (!--pending) resolve();
+                      })
+                      .catch(reject);
+                  })
+                  .catch(reject);
           }
         });
       });
