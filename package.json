@@ -1,6 +1,6 @@
 {
   "name": "afront",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "AFront is a front-end JavaScript library designed to create seamless server-side rendered (SSSR) websites.",
   "main": "webpack.dev.js",
   "scripts": {
@@ -41,7 +41,7 @@
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "afront": "^1.0.15",
+    "afront": "^1.0.22",
     "asggen-headtags": "^1.0.3",
     "aui": "file:../AUI",
     "babel-plugin-css-modules-transform": "^1.6.2",
