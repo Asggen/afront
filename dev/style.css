@@ -1,4 +1,38 @@
 /* style.css */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+#loading {
+  position: fixed;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  z-index: 9999;
+}
+
+.loadingLogo {
+  overflow: hidden;
+  width: 9.375rem;
+  height: auto;
+}
+
+/* Used to hide the loading element without inline styles */
+.hidden {
+  display: none !important;
+}
+
 .color {
     color: var(--white);
 }

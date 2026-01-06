@@ -8,36 +8,8 @@
     <meta name="description" content="Default description" />
     <meta name="keywords" content="default, keywords" />
 
-    <style>
-      *,
-      *::before,
-      *::after {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        background: transparent;
-      }
-
-      #loading {
-        position: fixed;
-        overflow: hidden;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: white;
-        z-index: 9999;
-      }
-
-      .loadingLogo {
-        overflow: hidden;
-        width: 9.375rem;
-        height: auto;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="inline.js"></script>
   </head>
 
   <body>
@@ -50,33 +22,5 @@
         </svg>
     </div> -->
     <asggenapp id="asggen"></asggenapp>
-    <script>
-      window.addEventListener("load", () => {
-        const loadingElement = document.getElementById("loading");
-        if (loadingElement) {
-          setTimeout(() => {
-            loadingElement.style.display = "none";
-          }, 300);
-        }
-      });
-    </script>
-
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/service-worker.js")
-            .then((registration) => {
-              console.log(
-                "Service Worker registered with scope:",
-                registration.scope
-              );
-            })
-            .catch((error) => {
-              console.error("Service Worker registration failed:", error);
-            });
-        });
-      }
-    </script>
   </body>
 </html>

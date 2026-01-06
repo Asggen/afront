@@ -1,4 +1,5 @@
 const htmlWebpackPlugin = require("html-webpack-plugin");
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -16,6 +17,11 @@ module.exports = {
     port: 9999,
     open: true,
     historyApiFallback: true,
+    headers: {
+      // Dev server: send a permissive CSP header to avoid blocking during development.
+      // This header is intentionally more permissive than the production meta tag.
+      "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+    }
   },
   output: {
     filename: "[name].bundle.js",
@@ -107,6 +113,16 @@ module.exports = {
           },
         };
       },
+    }),
+    new CspHtmlWebpackPlugin({
+      "default-src": ["'self'"],
+      "script-src": ["'self'"],
+      "style-src": ["'self'", "https://fonts.googleapis.com", "'unsafe-hashes'"],
+      "style-src-elem": ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com"]
+    }, {
+      hashingMethod: 'sha256',
+      hashEnabled: { 'script-src': true, 'style-src': true }
     }),
   ],
 };
