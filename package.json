@@ -26,6 +26,7 @@
   "author": "imarksea - Piyush Nishad",
   "files": [
     "install.js",
+    "package-lock.json",
     "server.js",
     "webpack.build-prod.js",
     "webpack.dev.js",
@@ -41,9 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "afront": "^1.0.15",
     "asggen-headtags": "^1.0.3",
-    "aui": "file:../AUI",
     "babel-plugin-css-modules-transform": "^1.6.2",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "banner-webpack-after-content": "^1.0.3",
