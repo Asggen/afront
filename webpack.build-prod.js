@@ -1,4 +1,5 @@
 const htmlWebpackPlugin = require("html-webpack-plugin");
+const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -110,6 +111,16 @@ module.exports = {
         };
       },
     }),
+    new CspHtmlWebpackPlugin({
+      "default-src": ["'self'"],
+      "script-src": ["'self'"],
+      "style-src": ["'self'", "https://fonts.googleapis.com", "'unsafe-hashes'"],
+      "style-src-elem": ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com"]
+    }, {
+      hashingMethod: 'sha256',
+      hashEnabled: { 'script-src': true, 'style-src': true }
+    }),
     new MiniCssExtractPlugin({
       filename: "static/css/[name]-[contenthash].css",
     }),
@@ -120,6 +131,7 @@ module.exports = {
         { from: "dev/logo512.png", to: "logo512.png" }, // Copy logo512
         { from: "dev/manifest.json", to: "manifest.json" }, // Copy manifest
         { from: "dev/style.css", to: "style.css" },
+        { from: "dev/inline.js", to: "inline.js" },
         { from: "dev/robots.txt", to: "robots.txt" },
         { from: "dev/service-worker.js", to: "service-worker.js" },
         { from: "dev/offline.html", to: "offline.html" },

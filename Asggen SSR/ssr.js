@@ -20,7 +20,7 @@ const HOST = process.env.HOST;
 // Disable the X-Powered-By header to avoid exposing Express
 app.disable("x-powered-by");
 
-// Use Helmet to set various HTTP headers for better security
+// Use Helmet to set various HTTP headers for better security, disable CSP to avoid issues with service worker and external fonts
 app.use(helmet());
 
 const buildProdPath = path.resolve(__dirname, "../build-prod");
