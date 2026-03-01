@@ -9,11 +9,11 @@ const readline = require("readline");
 const chalk = require("chalk");
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "afront-"));
-const VERSION = "1.0.25";
+const VERSION = "1.0.26";
 
 // Configuration
 const GITHUB_ZIP_URL =
-  "https://github.com/Asggen/afront/archive/refs/tags/v1.0.25.zip"; // Updated URL
+  "https://github.com/Asggen/afront/archive/refs/tags/v1.0.26.zip"; // Updated URL
 
 // Define files to skip
 const SKIP_FILES = [
