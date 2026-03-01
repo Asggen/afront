@@ -211,7 +211,7 @@ const safeMoveFile = async (resolvedSrc, resolvedDest) => {
       if (destHandle) await destHandle.close();
     } catch (e) {}
     try {
-      await safeUnlink(tmpName, [path.dirname(resolvedDest)]).catch(() => {});
+      await fs.promises.unlink(tmpName).catch(() => {});
     } catch (e) {}
     try {
       if (srcHandle) await srcHandle.close();
@@ -240,92 +240,48 @@ const removeDir = (dirPath) => {
   });
 };
 
-const SAFE_READDIR_ROOT = path.resolve(os.tmpdir());
+const safeReaddir = async (dirPath, safeRoot) => {
+  const resolvedDir = await fs.promises.realpath(dirPath);
+  const resolvedRoot = await fs.promises.realpath(safeRoot);
 
-const safeReaddir = (dirPath, cb) => {
-  const resolved = path.resolve(dirPath);
-
-  if (!resolved.startsWith(SAFE_READDIR_ROOT + path.sep)) {
-    return cb(new Error(`Blocked readdir outside safe root: ${resolved}`));
+  if (!resolvedDir.startsWith(resolvedRoot + path.sep) && resolvedDir !== resolvedRoot) {
+    throw new Error(`Blocked readdir outside safe root: ${resolvedDir}`);
   }
 
-  fs.lstat(resolved, (err, stats) => {
-    if (err) return cb(err);
-    if (!stats.isDirectory()) {
-      return cb(new Error(`Not a directory: ${resolved}`));
-    }
+  const stats = await fs.promises.lstat(resolvedDir);
+  if (!stats.isDirectory()) {
+    throw new Error(`Not a directory: ${resolvedDir}`);
+  }
 
-    fs.readdir(resolved, cb);
-  });
+  return fs.promises.readdir(resolvedDir);
 };
 
 
-const moveFiles = (srcPath, destPath) => {
-  return new Promise((resolve, reject) => {
-    safeReaddir(srcPath, (err, files) => {
-      if (err) {
-        return reject(err);
-      }
-      let pending = files.length;
-      if (!pending) return resolve();
-      files.forEach((file) => {
-        // Normalize and validate file name to avoid path traversal
-        const fileName = path.basename(file);
-        if (SKIP_FILES.includes(fileName)) {
-          if (!--pending) resolve();
-          return;
-        }
+const moveFiles = async (srcPath, destPath, safeRoot) => {
+  const files = await safeReaddir(srcPath, safeRoot);
 
-        const srcRoot = path.resolve(srcPath);
-        const destRoot = path.resolve(destPath);
-        const resolvedSrc = path.resolve(srcPath, file);
-        const resolvedDest = path.resolve(destPath, file);
+  for (const file of files) {
+    const fileName = path.basename(file);
+    if (SKIP_FILES.includes(fileName)) continue;
 
-        // Ensure resolved paths are inside their respective roots
-        if (
-          !(resolvedSrc === srcRoot || resolvedSrc.startsWith(srcRoot + path.sep)) ||
-          !(resolvedDest === destRoot || resolvedDest.startsWith(destRoot + path.sep))
-        ) {
-          console.warn(`Skipping suspicious path: ${file}`);
-          if (!--pending) resolve();
-          return;
-        }
+    const resolvedSrc = path.resolve(srcPath, file);
+    const resolvedDest = path.resolve(destPath, file);
 
-        // Use lstat to detect symlinks and refuse to follow them
-        fs.lstat(resolvedSrc, (err, stats) => {
-          if (err) {
-            return reject(err);
-          }
+    const stats = await fs.promises.lstat(resolvedSrc);
 
-          if (stats.isSymbolicLink()) {
-            console.warn(`Skipping symbolic link for safety: ${resolvedSrc}`);
-            if (!--pending) resolve();
-            return;
-          }
+    if (stats.isSymbolicLink()) {
+      console.warn(`Skipping symbolic link: ${resolvedSrc}`);
+      continue;
+    }
 
-          if (stats.isDirectory()) {
-            createDirIfNotExists(resolvedDest)
-              .then(() => moveFiles(resolvedSrc, resolvedDest))
-              .then(() => {
-                if (!--pending) resolve();
-              })
-              .catch(reject);
-          } else {
-                // Use atomic-safe move: copy from a non-following FD to temp file, then rename
-                createDirIfNotExists(path.dirname(resolvedDest))
-                  .then(() => {
-                    safeMoveFile(resolvedSrc, resolvedDest)
-                      .then(() => {
-                        if (!--pending) resolve();
-                      })
-                      .catch(reject);
-                  })
-                  .catch(reject);
-          }
-        });
-      });
-    });
-  });
+    if (stats.isDirectory()) {
+      await createDirIfNotExists(resolvedDest);
+      await moveFiles(resolvedSrc, resolvedDest, safeRoot);
+    } else {
+      await createDirIfNotExists(path.dirname(resolvedDest));
+      await safeMoveFile(resolvedSrc, resolvedDest);
+    }
+  }
 };
 
 const main = async () => {
@@ -389,7 +345,7 @@ const main = async () => {
 
     fs.readdirSync(extractedFolderPath);
 
-    await moveFiles(extractedFolderPath, destDir);
+    await moveFiles(extractedFolderPath, destDir, tmpDir.name);
 
     // Remove any bundled lockfiles from the extracted archive to avoid integrity
     // checksum mismatches originating from the release zip's lockfile.
