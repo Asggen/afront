@@ -7,13 +7,46 @@ const os = require("os");
 const AdmZip = require("adm-zip");
 const readline = require("readline");
 const chalk = require("chalk");
+const semver = require("semver");
+const cliProgress = require("cli-progress");
+const packageJson = require("./package.json");
 
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "afront-"));
-const VERSION = "1.0.26";
+const VERSION = packageJson.version;
+const MIN_NODE_VERSION = "20.18.1";
+
+if (!semver.gte(process.version, MIN_NODE_VERSION)) {
+  console.error(
+    chalk.red(
+      `\n✖ AFront requires Node.js ${MIN_NODE_VERSION} or higher.\nCurrent: ${process.version}\n`,
+    ),
+  );
+  process.exit(1);
+}
+
+process.on("SIGINT", () => {
+  console.log(chalk.yellow("\n\nInstallation cancelled."));
+  rl.close();
+  cleanup();
+  process.exit(1);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error(chalk.red("\nUnexpected error:\n"), err);
+  rl.close();
+  cleanup();
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error(chalk.red("\nUnhandled promise rejection:\n"), err);
+  rl.close();
+  cleanup();
+  process.exit(1);
+});
 
 // Configuration
-const GITHUB_ZIP_URL =
-  "https://github.com/Asggen/afront/archive/refs/tags/v1.0.26.zip"; // Updated URL
+const GITHUB_ZIP_URL = `https://codeload.github.com/Asggen/afront/zip/refs/tags/v${VERSION}`;
 
 // Define files to skip
 const SKIP_FILES = [
@@ -30,14 +63,30 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+const cleanup = () => {
+  try {
+    if (fs.existsSync(tmpDir)) {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  } catch (err) {
+    console.error("Error cleaning up temporary directory:", err);
+  }
+};
+
 // Spinner function
 const spinner = (text, delay = 100) => {
+  if (!process.stdout.isTTY) {
+    console.log(text);
+    return () => {};
+  }
+
   const spinnerChars = ["|", "/", "-", "\\"];
   let i = 0;
+
   const interval = setInterval(() => {
     readline.cursorTo(process.stdout, 0);
     process.stdout.write(`${text} ${spinnerChars[i++]}`);
-    i = i % spinnerChars.length;
+    i %= spinnerChars.length;
   }, delay);
 
   return () => {
@@ -58,43 +107,103 @@ const askQuestion = (question) => {
 const downloadFile = (url, destination) => {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(destination);
-    const stopSpinner = spinner(chalk.cyan("⬇ Downloading template..."));
-
-    const request = https.get(url, (response) => {
-      if (
-        response.statusCode >= 300 &&
-        response.statusCode < 400 &&
-        response.headers.location
-      ) {
-        return downloadFile(response.headers.location, destination)
-          .then(resolve)
-          .catch(reject);
-      }
-
-      if (response.statusCode !== 200) {
-        stopSpinner();
-        return reject(
-          new Error(
-            `Failed to download file. Status code: ${response.statusCode}`,
-          ),
-        );
-      }
-
-      response.pipe(file);
-
-      file.on("finish", () => {
-        file.close(() => {
-          stopSpinner();
-          resolve();
-        });
-      });
-    });
-
-    request.on("error", (err) => {
-      stopSpinner();
-      fs.promises.unlink(destination).catch(() => {});
+    file.on("error", (err) => {
       reject(err);
     });
+
+    https
+      .get(url, (response) => {
+        if (
+          response.statusCode >= 300 &&
+          response.statusCode < 400 &&
+          response.headers.location
+        ) {
+          return downloadFile(response.headers.location, destination)
+            .then(resolve)
+            .catch(reject);
+        }
+
+        if (response.statusCode !== 200) {
+          return reject(
+            new Error(
+              `Failed to download file. Status code: ${response.statusCode}`,
+            ),
+          );
+        }
+
+        const totalHeader = response.headers["content-length"];
+        const total = totalHeader ? Number(totalHeader) : null;
+
+        let bar;
+        let downloaded = 0;
+
+        const useTTY = process.stdout.isTTY;
+
+        const formatBytes = (bytes) => {
+          if (bytes < 1024) return bytes + " B";
+          if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+          return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+        };
+
+        if (useTTY && total) {
+          let downloadedBytes = 0;
+          const totalFormatted = formatBytes(total);
+
+          bar = new cliProgress.SingleBar({
+            format: (options, params) => {
+              const percentage = Math.floor(
+                (params.value / params.total) * 100,
+              );
+
+              const termWidth = process.stdout.columns || 80;
+              const barLength = Math.max(10, Math.min(termWidth - 60, 30));
+              const filledLength = Math.round(barLength * params.progress);
+
+              const barVisual =
+                "█".repeat(filledLength) + "░".repeat(barLength - filledLength);
+
+              const downloadedFormatted = formatBytes(params.value);
+              const totalFormatted = formatBytes(params.total);
+
+              return (
+                chalk.cyan("⬇ Downloading template  ") +
+                chalk.green(barVisual) +
+                chalk.white(` ${percentage}%`) +
+                chalk.gray(` (${downloadedFormatted} / ${totalFormatted})`)
+              );
+            },
+            hideCursor: true,
+            clearOnComplete: false,
+          });
+
+          bar.start(total, 0);
+
+          response.on("data", (chunk) => {
+            downloadedBytes += chunk.length;
+            bar.update(downloadedBytes);
+          });
+        } else {
+          console.log(chalk.cyan("⬇ Downloading template..."));
+        }
+
+        response.pipe(file);
+
+        file.on("finish", () => {
+          file.close(() => {
+            if (bar) {
+              bar.stop();
+              const totalFormatted = formatBytes(total);
+              console.log(
+                chalk.green(`✔ Downloaded template (${totalFormatted})`),
+              );
+            }
+            resolve();
+          });
+        });
+      })
+      .on("error", (err) => {
+        reject(err);
+      });
   });
 };
 
@@ -124,42 +233,91 @@ const extractZip = (zipPath, extractTo) => {
 
 const runNpmInstall = (directory) => {
   return new Promise((resolve, reject) => {
-    const stopSpinner = spinner(chalk.magenta("📦 Installing dependencies (this may take a few seconds)..."));
+    const isWindows = process.platform === "win32";
+
+    // ✅ Non-interactive (CI / Docker / GitHub Actions)
+    if (!process.stdout.isTTY) {
+      const child = spawn(
+        isWindows ? "npm.cmd" : "npm",
+        ["install", "--legacy-peer-deps"],
+        {
+          cwd: directory,
+          stdio: "inherit",
+          shell: isWindows,
+        },
+      );
+
+      child.on("close", (code) =>
+        code === 0 ? resolve() : reject(new Error("npm install failed")),
+      );
+
+      child.on("error", reject);
+      return;
+    }
+
+    // ✅ Interactive terminal (with progress bar)
+    console.log();
+
+    const bar = new cliProgress.SingleBar(
+      {
+        format:
+          chalk.magenta("📦 Installing dependencies  ") +
+          chalk.green("{bar}") +
+          chalk.white(" {percentage}%"),
+        barCompleteChar: "█",
+        barIncompleteChar: "░",
+        hideCursor: true,
+        clearOnComplete: false,
+      },
+      cliProgress.Presets.shades_classic,
+    );
+
+    bar.start(100, 0);
+
+    let progress = 0;
+
+    // Smooth simulated progress
+    const interval = setInterval(() => {
+      if (progress < 90) {
+        progress += Math.random() * 5;
+        bar.update(Math.floor(progress));
+      }
+    }, 200);
 
     const child = spawn(
-      process.platform === "win32" ? "npm.cmd" : "npm",
+      isWindows ? "npm.cmd" : "npm",
       [
         "install",
         "--legacy-peer-deps",
         "--no-audit",
         "--no-fund",
+        "--no-progress",
         "--loglevel=error",
       ],
       {
         cwd: directory,
-        stdio: "pipe",
-        shell: false,
+        stdio: "ignore",
+        shell: isWindows,
       },
     );
 
-    let errorOutput = "";
-
-    child.stderr.on("data", (data) => {
-      errorOutput += data.toString();
-    });
-
     child.on("close", (code) => {
-      stopSpinner();
+      clearInterval(interval);
+
       if (code === 0) {
+        bar.update(100);
+        bar.stop();
+        console.log();
         resolve();
       } else {
-        console.error(chalk.red(errorOutput));
-        reject(new Error(`npm install failed with code ${code}`));
+        bar.stop();
+        reject(new Error(`npm exited with code ${code}`));
       }
     });
 
     child.on("error", (err) => {
-      stopSpinner();
+      clearInterval(interval);
+      bar.stop();
       reject(err);
     });
   });
@@ -394,6 +552,14 @@ const main = async () => {
 
     folderName = sanitizeFolderName(folderName);
 
+    if (folderName === path.basename(process.cwd())) {
+      console.log(
+        chalk.yellow(
+          "\nYou are creating a project inside the current directory.\n",
+        ),
+      );
+    }
+
     console.log(
       chalk.green(`Creating project in ${chalk.bold(`./${folderName}`)}\n`),
     );
@@ -422,12 +588,14 @@ const main = async () => {
 
     const extractedFolderName = extractedItems.find((item) => {
       const fullPath = path.join(tmpDir, item);
-      return fs.lstatSync(fullPath).isDirectory();
+
+      return fs.lstatSync(fullPath).isDirectory() && item.startsWith("afront-");
     });
 
     if (!extractedFolderName) {
-      throw new Error("Extraction failed: no directory found in archive.");
+      throw new Error("Extraction failed: extracted folder not found.");
     }
+
     const extractedFolderPath = path.join(tmpDir, extractedFolderName);
 
     await moveFiles(extractedFolderPath, destDir, tmpDir);
@@ -443,6 +611,10 @@ const main = async () => {
       // ignore
     }
 
+    if (!fs.existsSync(path.join(destDir, "package.json"))) {
+      throw new Error("package.json not found after extraction.");
+    }
+
     await runNpmInstall(destDir);
 
     console.log(chalk.green("\n✔ AFront project created successfully!\n"));
@@ -454,8 +626,7 @@ const main = async () => {
     console.log(chalk.gray("Happy building with AFront 🚀"));
 
     rl.close();
-
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    cleanup();
     process.exit(0);
   } catch (err) {
     console.error(chalk.red("✖ Error:"), err.message);
@@ -514,5 +685,13 @@ const showBanner = () => {
   console.log(chalk.gray("🚀 https://afront.dev\n"));
 };
 
-showBanner();
-main();
+(async () => {
+  try {
+    showBanner();
+    await main();
+  } catch (err) {
+    console.error(chalk.red("✖ Fatal Error:"), err.message);
+    cleanup();
+    process.exit(1);
+  }
+})();
