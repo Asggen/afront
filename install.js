@@ -6,7 +6,10 @@ const { spawn } = require("child_process");
 const os = require("os");
 const AdmZip = require("adm-zip");
 const readline = require("readline");
+const chalk = require("chalk");
+
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "afront-"));
+const VERSION = "1.0.25";
 
 // Configuration
 const GITHUB_ZIP_URL =
@@ -55,7 +58,7 @@ const askQuestion = (question) => {
 const downloadFile = (url, destination) => {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(destination);
-    const stopSpinner = spinner("Downloading");
+    const stopSpinner = spinner(chalk.cyan("⬇ Downloading template..."));
 
     const request = https.get(url, (response) => {
       if (
@@ -97,7 +100,7 @@ const downloadFile = (url, destination) => {
 
 const extractZip = (zipPath, extractTo) => {
   return new Promise((resolve, reject) => {
-    const stopSpinner = spinner("Extracting");
+    const stopSpinner = spinner(chalk.yellow("📦 Extracting files..."));
     try {
       const zip = new AdmZip(zipPath);
       zip.extractAllTo(extractTo, true);
@@ -121,24 +124,37 @@ const extractZip = (zipPath, extractTo) => {
 
 const runNpmInstall = (directory) => {
   return new Promise((resolve, reject) => {
-    const stopSpinner = spinner("Running npm install");
+    const stopSpinner = spinner(chalk.magenta("📦 Installing dependencies (this may take a few seconds)..."));
 
     const child = spawn(
       process.platform === "win32" ? "npm.cmd" : "npm",
-      ["install", "--legacy-peer-deps", "--no-audit", "--no-fund"],
+      [
+        "install",
+        "--legacy-peer-deps",
+        "--no-audit",
+        "--no-fund",
+        "--loglevel=error",
+      ],
       {
         cwd: directory,
-        stdio: "inherit",
+        stdio: "pipe",
         shell: false,
-      }
+      },
     );
+
+    let errorOutput = "";
+
+    child.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
 
     child.on("close", (code) => {
       stopSpinner();
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`npm install exited with code ${code}`));
+        console.error(chalk.red(errorOutput));
+        reject(new Error(`npm install failed with code ${code}`));
       }
     });
 
@@ -378,6 +394,10 @@ const main = async () => {
 
     folderName = sanitizeFolderName(folderName);
 
+    console.log(
+      chalk.green(`Creating project in ${chalk.bold(`./${folderName}`)}\n`),
+    );
+
     const destDir = path.join(process.cwd(), folderName);
 
     if (fs.existsSync(destDir)) {
@@ -395,7 +415,6 @@ const main = async () => {
     }
 
     await downloadFile(GITHUB_ZIP_URL, zipPath);
-    console.log("Downloaded successfully.");
 
     await extractZip(zipPath, tmpDir);
 
@@ -426,15 +445,74 @@ const main = async () => {
 
     await runNpmInstall(destDir);
 
+    console.log(chalk.green("\n✔ AFront project created successfully!\n"));
+
+    console.log(chalk.bold("Next steps:"));
+    console.log(chalk.cyan(`  cd ${folderName}`));
+    console.log(chalk.cyan("  npm start\n"));
+
+    console.log(chalk.gray("Happy building with AFront 🚀"));
+
     rl.close();
 
     fs.rmSync(tmpDir, { recursive: true, force: true });
     process.exit(0);
   } catch (err) {
-    console.error("Error:", err);
+    console.error(chalk.red("✖ Error:"), err.message);
     rl.close();
     process.exit(1);
   }
 };
 
+const showBanner = () => {
+  console.log(
+    chalk.cyan.white(`
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████    ████████
+████████████████████████████████████    ██████████
+██████████████████████████████████     ███████████
+████████████████████████████████     █████████████
+██████████████████████████████     ███████████████
+████████████████████████████     █████████████████
+███████████████████████████    ███████████████████
+█████████████████████████     ████████████████████
+███████████████████████     ██████████████████████
+█████████████████████     ████████████████████████
+███████████████████     ██████████████████████████
+█████████████████     ████████████████████████████
+████████████████    ██████████████████████████████
+██████████████    ████████████████████████████████
+████████████     █████████████████████████████████
+██████████     ███████████████████████████████████
+████████     █████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+██████████████████████████████████████████████████
+
+`),
+  );
+
+  console.log(
+    chalk.cyan.bold(`
+ █████╗ ███████╗██████╗  ██████╗ ███╗   ██╗████████╗
+██╔══██╗██╔════╝██╔══██╗██╔═══██╗████╗  ██║╚══██╔══╝
+███████║█████╗  ██████╔╝██║   ██║██╔██╗ ██║   ██║   
+██╔══██║██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║   ██║   
+██║  ██║██║     ██║  ██║╚██████╔╝██║ ╚████║   ██║   
+╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   
+`),
+  );
+
+  console.log(chalk.cyan.bold(`⚡ AFront v${VERSION}\n`));
+  console.log(chalk.gray("The Future-Ready Frontend Framework\n"));
+  console.log(chalk.gray("🚀 https://afront.dev\n"));
+};
+
+showBanner();
 main();
