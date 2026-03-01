@@ -72,6 +72,7 @@ const downloadFile = (url, destination) => {
     }).on('error', (err) => {
       fs.promises.unlink(destination).catch(() => {});
       reject(err);
+    });
   });
 };
 
