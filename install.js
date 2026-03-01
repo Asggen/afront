@@ -70,9 +70,8 @@ const downloadFile = (url, destination) => {
         });
       });
     }).on('error', (err) => {
-      // attempt to remove partial download only if it's inside allowed temp locations
-      safeUnlink(destination).finally(() => reject(err));
-    });
+      fs.promises.unlink(destination).catch(() => {});
+      reject(err);
   });
 };
 
@@ -137,10 +136,10 @@ const isPathInside = (root, target) => {
 
 
 // Security: path validated against SAFE_UNLINK_ROOT before unlink
-const SAFE_UNLINK_ROOT = path.resolve(process.cwd());
+const SAFE_UNLINK_ROOT = fs.realpathSync(process.cwd());
 
 const safeUnlink = async (targetPath) => {
-  const resolved = path.resolve(targetPath);
+  const resolved = await fs.promises.realpath(targetPath);
 
   if (!resolved.startsWith(SAFE_UNLINK_ROOT + path.sep)) {
     throw new Error(`Blocked unlink outside safe root: ${resolved}`);
@@ -339,8 +338,17 @@ const main = async () => {
     console.log('Downloaded successfully.');
 
     await extractZip(zipPath, tmpDir.name);
+    
+    const extractedItems = fs.readdirSync(tmpDir.name);
 
-    const extractedFolderName = fs.readdirSync(tmpDir.name)[0];
+    const extractedFolderName = extractedItems.find(item => {
+    const fullPath = path.join(tmpDir.name, item);
+      return fs.lstatSync(fullPath).isDirectory();
+    });
+
+    if (!extractedFolderName) {
+      throw new Error("Extraction failed: no directory found in archive.");
+    }
     const extractedFolderPath = path.join(tmpDir.name, extractedFolderName);
 
     fs.readdirSync(extractedFolderPath);
