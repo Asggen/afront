@@ -1,5 +1,5 @@
 const htmlWebpackPlugin = require("html-webpack-plugin");
-const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
+const CspHtmlWebpackPlugin = require("csp-html-webpack-plugin");
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -10,22 +10,49 @@ module.exports = {
   mode: "development",
   entry: "./src/index.js",
   devtool: "cheap-module-source-map",
+  stats: "errors-warnings",
+
+  infrastructureLogging: {
+    level: "warn",
+  },
+
   devServer: {
     static: {
       directory: path.join(__dirname, "dev"),
     },
     port: 9999,
-    open: true,
+    open: false,
     historyApiFallback: true,
+    client: {
+      logging: "none",
+      overlay: {
+        errors: true,
+        warnings: true,
+      },
+    },
+
+    devMiddleware: {
+      stats: "errors-warnings",
+    },
+
+    // 🔥 THIS hides "Project is running at" etc
+    setupMiddlewares: (middlewares, devServer) => {
+      devServer.logger.info = () => {};
+      return middlewares;
+    },
     headers: {
-      // Dev server: send a permissive CSP header to avoid blocking during development.
-      // This header is intentionally more permissive than the production meta tag.
-      "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
-    }
+      "Content-Security-Policy": `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' ws://localhost:9797 ws://localhost:9999;
+  `.replace(/\n/g, ""),
+    },
   },
   output: {
     filename: "[name].bundle.js",
-    path: `${__dirname}/dev`,
+    path: path.resolve(__dirname, "dev"),
     publicPath: "/",
     clean: true,
   },
@@ -114,15 +141,27 @@ module.exports = {
         };
       },
     }),
-    new CspHtmlWebpackPlugin({
-      "default-src": ["'self'"],
-      "script-src": ["'self'"],
-      "style-src": ["'self'", "https://fonts.googleapis.com", "'unsafe-hashes'"],
-      "style-src-elem": ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-      "font-src": ["'self'", "https://fonts.gstatic.com"]
-    }, {
-      hashingMethod: 'sha256',
-      hashEnabled: { 'script-src': true, 'style-src': true }
-    }),
+    new CspHtmlWebpackPlugin(
+      {
+        "default-src": ["'self'"],
+        "script-src": ["'self'"],
+        "style-src": [
+          "'self'",
+          "https://fonts.googleapis.com",
+          "'unsafe-hashes'",
+        ],
+        "style-src-elem": [
+          "'self'",
+          "https://fonts.googleapis.com",
+          "https://fonts.gstatic.com",
+        ],
+        "font-src": ["'self'", "https://fonts.gstatic.com"],
+        "connect-src": ["'self'", "ws://localhost:9797", "ws://localhost:9999"],
+      },
+      {
+        hashingMethod: "sha256",
+        hashEnabled: { "script-src": true, "style-src": true },
+      },
+    ),
   ],
 };

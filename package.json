@@ -8,7 +8,7 @@
     "build:ssr": "webpack --config webpack.ssr.prod.js",
     "build:alt": "webpack --config webpack.build-prod.js && webpack --config webpack.post-prod-static.js --stats-error-details",
     "prod:ssr": "node build-prod-ssr/ssr.prod.js",
-    "start": "webpack serve --config webpack.dev.js",
+    "start": "node afront.js",
     "static": "node server.js"
   },
   "repository": {
@@ -58,12 +58,14 @@
     "html-inline-css-webpack-plugin": "^1.11.2",
     "ignore-styles": "^5.0.1",
     "loader-utils": "^3.3.1",
+    "open": "^11.0.0",
     "react-router": "^7.12.0",
     "readline-sync": "^1.4.10",
     "semver": "^7.7.4",
     "styled-components": "^6.1.13",
     "terser-webpack-plugin": "^5.3.10",
-    "tmp": "^0.2.3"
+    "tmp": "^0.2.3",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
